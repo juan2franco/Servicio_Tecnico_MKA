@@ -24,3 +24,8 @@ __pycache__/
 # Archivos operativo
 .DS_Store
 Thumbs.db
+
+# Tailwind
+
+node_modules/
+
