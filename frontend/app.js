@@ -1,151 +1,236 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000";
 
-// Click
-function switchTab(tabName) {
-    document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+// ==========================================
+// 1. NAVEGACIÓN ENTRE VISTAS (SPA)
+// ==========================================
+function navTo(targetView) {
+  // Ocultar todas las secciones de vista
+  document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+  
+  // Quitar estilo activo de los botones del sidebar
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('bg-indigo-600/20', 'text-indigo-400', 'border', 'border-indigo-500/30');
+    btn.classList.add('text-slate-400');
+  });
 
-    document.getElementById(`tab-${tabName}`).classList.add("active");
-    event.currentTarget.classList.add("active");
+  // Mostrar la vista seleccionada
+  const activeView = document.getElementById(`view-${targetView}`);
+  if (activeView) {
+    activeView.classList.remove('hidden');
+  }
 
-    // ERE
-    if (tabName === 'clientes') fetchClients();
-    if (tabName === 'tecnicos') fetchTechs();
-    if (tabName === 'ordenes') fetchOrders();
+  // Resaltar el botón presionado
+  const activeBtn = document.getElementById(`nav-btn-${targetView}`);
+  if (activeBtn) {
+    activeBtn.classList.remove('text-slate-400');
+    activeBtn.classList.add('bg-indigo-600/20', 'text-indigo-400', 'border', 'border-indigo-500/30');
+  }
+
+  // Cargar los datos desde la API según el módulo
+  if (targetView === 'clientes') obtenerClientes();
+  if (targetView === 'tecnicos') obtenerTecnicos();
+  if (targetView === 'ordenes') obtenerOrdenes();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    fetchClients();
-});
+// Hacer que navTo esté disponible globalmente en window (para los onclick="" del HTML)
+window.navTo = navTo;
 
-// CLIENTES
-function fetchClients() {
-    fetch(`${BASE_URL}/Clientes/`)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById("clients-table-body");
-            tbody.innerHTML = "";
-            data.forEach(c => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${c.id}</td>
-                        <td>${c.full_name}</td>
-                        <td>${c.document_type}: ${c.document_id}</td>
-                        <td>${c.phone}</td>
-                        <td>${c.email || 'N/A'}</td>
-                    </tr>`;
-            });
-        });
-}
-
-document.getElementById("client-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const newClient = {
-        full_name: document.getElementById("client_name").value,
-        document_type: document.getElementById("client_doc_type").value,
-        document_id: document.getElementById("client_doc_id").value,
-        phone: document.getElementById("client_phone").value,
-        email: document.getElementById("client_email").value || null
-    };
-
-    fetch(`${BASE_URL}/Clientes/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newClient)
-    }).then(() => {
-        alert("Cliente guardado!");
-        document.getElementById("client-form").reset();
-        fetchClients();
-    });
-});
-
-// TÉCNICOS 
-function fetchTechs() {
-    fetch(`${BASE_URL}/Tecnicos/`)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById("techs-table-body");
-            tbody.innerHTML = "";
-            data.forEach(t => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${t.id}</td>
-                        <td>${t.full_name}</td>
-                        <td>${t.document_type}: ${t.document_id}</td>
-                        <td>${t.especiality}</td>
-                        <td>${t.phone}</td>
-                        <td>${t.email || 'N/A'}</td>
-                    </tr>`;
-            });
-        })
-        .catch(err => console.error("Error al cargar técnicos:", err));
-}
-
-document.getElementById("tech-form").addEventListener("submit", (e) => {
-    e.preventDefault();
+// ==========================================
+// 2. MÓDULO CLIENTES
+// ==========================================
+async function obtenerClientes() {
+  try {
+    const res = await fetch(`${API_URL}/Clientes/`);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const clientes = await res.json();
     
-    const newTech = {
-        full_name: document.getElementById("tech_name").value,
-        document_type: document.getElementById("tech_doc_type").value,
-        document_id: document.getElementById("tech_doc_id").value,
-        especiality: document.getElementById("tech_specialty").value,
-        phone: document.getElementById("tech_phone").value,
-        email: document.getElementById("tech_email").value || null
-    };
+    const list = document.getElementById('clientes-list');
+    if (!list) return;
 
-    fetch(`${BASE_URL}/Tecnicos/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTech)
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Error guardando técnico");
-        return res.json();
-    })
-    .then(() => {
-        alert("Técnico guardado correctamente!");
-        document.getElementById("tech-form").reset();
-        fetchTechs();
-    })
-    .catch(err => console.error("Error:", err));
-});
-// ÓRDENES
-function fetchOrders() {
-    fetch(`${BASE_URL}/Ordenes/`)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById("orders-table-body");
-            tbody.innerHTML = "";
-            data.forEach(o => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${o.id}</td>
-                        <td>${o.client_id}</td>
-                        <td>${o.tecnico_id}</td>
-                        <td>${o.device}</td>
-                        <td>${o.description}</td>
-                        <td><strong>${o.status || 'PENDIENTE'}</strong></td>
-                    </tr>`;
-            });
-        });
-}
+    list.innerHTML = clientes.length ? '' : '<p class="text-slate-400 text-sm">No hay clientes registrados.</p>';
 
-document.getElementById("order-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const newOrder = {
-        client_id: parseInt(document.getElementById("order_client_id").value),
-        tecnico_id: parseInt(document.getElementById("order_tech_id").value),
-        device: document.getElementById("order_device").value,
-        description: document.getElementById("order_description").value
-    };
-
-    fetch(`${BASE_URL}/Ordenes/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrder)
-    }).then(() => {
-        alert("Orden creada!");
-        document.getElementById("order-form").reset();
-        fetchOrders();
+    clientes.forEach(c => {
+      list.innerHTML += `
+        <li class="p-4 bg-slate-900/60 border border-slate-700/50 rounded-lg flex justify-between items-center">
+          <div>
+            <p class="font-semibold text-slate-200">${c.full_name}</p>
+            <p class="text-xs text-slate-400 mt-0.5">
+              ${c.document_type || 'Doc'}: ${c.document_id || 'N/A'} | Tel: ${c.phone} | Correo: ${c.email || 'N/A'}
+            </p>
+            <p class="text-xs text-slate-500">Dir: ${c.direccion}</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-md font-mono">
+            ID: ${c.id}
+          </span>
+        </li>`;
     });
+  } catch (err) {
+    console.error("Error al obtener clientes:", err);
+  }
+}
+window.obtenerClientes = obtenerClientes;
+
+// ==========================================
+// 3. MÓDULO TÉCNICOS
+// ==========================================
+async function obtenerTecnicos() {
+  try {
+    const res = await fetch(`${API_URL}/Tecnicos/`);
+    if (!res.ok) return;
+    const tecnicos = await res.json();
+    
+    const list = document.getElementById('tecnicos-list');
+    if (!list) return;
+
+    list.innerHTML = tecnicos.length ? '' : '<p class="text-slate-400 text-sm">No hay técnicos registrados.</p>';
+
+    tecnicos.forEach(t => {
+      list.innerHTML += `
+        <li class="p-4 bg-slate-900/60 border border-slate-700/50 rounded-lg flex justify-between items-center">
+          <div>
+            <p class="font-semibold text-slate-200">${t.nombre}</p>
+            <p class="text-xs text-slate-400 mt-0.5">Especialidad: ${t.especialidad || 'General'} | Tel: ${t.telefono || 'N/A'}</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md font-mono">
+            ID: ${t.id}
+          </span>
+        </li>`;
+    });
+  } catch (err) {
+    console.error("Error al obtener técnicos:", err);
+  }
+}
+window.obtenerTecnicos = obtenerTecnicos;
+
+// ==========================================
+// 4. MÓDULO ÓRDENES
+// ==========================================
+async function obtenerOrdenes() {
+  try {
+    const res = await fetch(`${API_URL}/Ordenes/`);
+    if (!res.ok) return;
+    const ordenes = await res.json();
+    
+    const list = document.getElementById('ordenes-list');
+    if (!list) return;
+
+    list.innerHTML = ordenes.length ? '' : '<p class="text-slate-400 text-sm">No hay órdenes registradas.</p>';
+
+    ordenes.forEach(o => {
+      list.innerHTML += `
+        <li class="p-4 bg-slate-900/60 border border-slate-700/50 rounded-lg flex justify-between items-center">
+          <div>
+            <p class="font-semibold text-slate-200">Equipo: ${o.equipo}</p>
+            <p class="text-xs text-slate-400 mt-0.5">Cliente ID: ${o.cliente_id} | Detalle: ${o.descripcion}</p>
+          </div>
+          <span class="text-xs px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md font-mono">
+            Orden #${o.id}
+          </span>
+        </li>`;
+    });
+  } catch (err) {
+    console.error("Error al obtener órdenes:", err);
+  }
+}
+window.obtenerOrdenes = obtenerOrdenes;
+
+// ==========================================
+// 5. EVENT LISTENERS PARA FORMULARIOS
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // Guardar Cliente
+  const clientForm = document.getElementById('client-form');
+  if (clientForm) {
+    clientForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        full_name: document.getElementById('full_name').value,
+        document_type: document.getElementById('document_type').value,
+        document_id: document.getElementById('document_id').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value || null,
+        direccion: document.getElementById('direccion').value
+      };
+
+      try {
+        const res = await fetch(`${API_URL}/Clientes/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          clientForm.reset();
+          obtenerClientes();
+        } else {
+          console.error("Error al guardar cliente. Estado HTTP:", res.status);
+        }
+      } catch (err) {
+        console.error("Error de red al guardar cliente:", err);
+      }
+    });
+  }
+
+  // Guardar Técnico
+  const tecForm = document.getElementById('tecnico-form');
+  if (tecForm) {
+    tecForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        nombre: document.getElementById('tec-nombre').value,
+        especialidad: document.getElementById('tec-especialidad').value,
+        telefono: document.getElementById('tec-telefono').value
+      };
+
+      try {
+        const res = await fetch(`${API_URL}/Tecnicos/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          tecForm.reset();
+          obtenerTecnicos();
+        }
+      } catch (err) {
+        console.error("Error de red al guardar técnico:", err);
+      }
+    });
+  }
+
+  // Guardar Orden
+  const ordForm = document.getElementById('orden-form');
+  if (ordForm) {
+    ordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        cliente_id: parseInt(document.getElementById('ord-cliente-id').value),
+        equipo: document.getElementById('ord-equipo').value,
+        descripcion: document.getElementById('ord-descripcion').value
+      };
+
+      try {
+        const res = await fetch(`${API_URL}/Ordenes/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          ordForm.reset();
+          obtenerOrdenes();
+        }
+      } catch (err) {
+        console.error("Error de red al guardar orden:", err);
+      }
+    });
+  }
+
+  // Cargar vista inicial al abrir la página
+  navTo('clientes');
 });

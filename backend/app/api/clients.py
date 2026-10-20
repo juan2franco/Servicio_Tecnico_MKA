@@ -14,7 +14,8 @@ client_db = [
     "document_type": "CC",
     "document_id": "1008776554",
     "phone": "3108876651",
-    "email": "carlos@gmail.com"
+    "email": "carlos@gmail.com",
+    "direccion": "Calle 15 # 5-12"
      }
      
 ]
@@ -28,7 +29,8 @@ def create_client(client: ClientCreate):
         "document_type": client.document_type,
         "document_id": client.document_id,
         "phone": client.phone,
-        "email": client.email
+        "email": client.email,
+        "direccion": client.direccion
         
     }
     client_db.append(new_client)   
@@ -58,6 +60,7 @@ def update_client(client_id: int, update_client: ClientCreate):
                 client["document_id"] = update_client.document_id
                 client["phone"] = update_client.phone
                 client["email"] = update_client.email
+                client["direccion"] = update_client.direccion
                 return client
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

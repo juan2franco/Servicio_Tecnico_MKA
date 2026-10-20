@@ -7,6 +7,8 @@ class ClientCreate(BaseModel):
     document_id: str
     phone: str
     email: Optional[str] = None
+    direccion: str
+    
     
 class ClientResponse(ClientCreate):
     id: int

@@ -1,176 +1,237 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro de Servicio Técnico</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="output.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MKA - Servicio Técnico</title>
+  <!-- Tailwind CSS Compilado -->
+  <link rel="stylesheet" href="output.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Centro de Servicio Técnico</h1>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-        <!-- Pestañas -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('clientes')">Clientes</button>
-            <button class="tab-btn" onclick="switchTab('tecnicos')">Técnicos</button>
-            <button class="tab-btn" onclick="switchTab('ordenes')">Órdenes de Servicio</button>
-        </div>
-
-        <!--CLIENTES -->
-        <div id="tab-clientes" class="tab-content active">
-            <div class="card">
-                <h2>Registrar Nuevo Cliente</h2>
-                <form id="client-form">
-                    <div class="form-group">
-                        <label>Nombre Completo:</label>
-                        <input type="text" id="client_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Tipo de Documento:</label>
-                        <select id="client_doc_type" required>
-                            <option value="CC">CC</option>
-                            <option value="CE">CE</option>
-                            <option value="PASAPORTE">Pasaporte</option>
-                            <option value="NIT">NIT</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Número de Documento:</label>
-                        <input type="text" id="client_doc_id" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Teléfono:</label>
-                        <input type="text" id="client_phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Correo Electrónico:</label>
-                        <input type="email" id="client_email">
-                    </div>
-                    <button type="submit" class="btn-primary">Guardar Cliente</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2>Lista de Clientes</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Documento</th>
-                            <th>Teléfono</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clients-table-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-       
-       <!--TÉCNICOS -->
-<div id="tab-tecnicos" class="tab-content">
-    <div class="card">
-        <h2>Registrar Nuevo Técnico</h2>
-        <form id="tech-form">
-            <div class="form-group">
-                <label>Nombre Completo:</label>
-                <input type="text" id="tech_name" required>
-            </div>
-            <div class="form-group">
-                <label>Tipo de Documento:</label>
-                <select id="tech_doc_type" required>
-                    <option value="CC">CC</option>
-                    <option value="CE">CE</option>
-                    <option value="PASAPORTE">Pasaporte</option>
-                    <option value="NIT">NIT</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Número de Documento:</label>
-                <input type="text" id="tech_doc_id" required>
-            </div>
-            <div class="form-group">
-                <label>Especialidad:</label>
-                <input type="text" id="tech_specialty" placeholder="Ej: Hardware, Pantallas" required>
-            </div>
-            <div class="form-group">
-                <label>Teléfono:</label>
-                <input type="text" id="tech_phone" required>
-            </div>
-            <div class="form-group">
-                <label>Correo Electrónico:</label>
-                <input type="email" id="tech_email">
-            </div>
-            <button type="submit" class="btn-primary">Guardar Técnico</button>
-        </form>
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR (HEADER)     -->
+  <!-- ========================================== -->
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl tracking-wider">MKA</div>
+      <h1 class="text-lg font-semibold text-slate-200">Panel de Servicio Técnico</h1>
     </div>
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+      API Conectada
+    </span>
+  </header>
 
-    <div class="card">
-        <h2>Lista de Técnicos</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Documento</th>
-                    <th>Especialidad</th>
-                    <th>Teléfono</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody id="techs-table-body"></tbody>
-        </table>
-    </div>
-</div>
+  <div class="flex flex-1">
+    
+    <!-- ========================================== -->
+    <!-- MENÚ LATERAL (SIDEBAR DE NAVEGACIÓN)      -->
+    <!-- ========================================== -->
+    <aside class="w-64 bg-slate-800/50 border-r border-slate-700 p-4 flex flex-col gap-6 hidden md:flex">
+      
+      <!-- Navegación: Módulo Clientes -->
+      <div>
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Clientes</h2>
+        <nav class="space-y-1">
+          <button onclick="navTo('clientes')" id="nav-btn-clientes" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600/20 text-indigo-400 font-medium border border-indigo-500/30 text-sm transition-colors">
+            <span>• Gestión de Clientes</span>
+          </button>
+        </nav>
+      </div>
 
-        <!-- ÓRDENES DE SERVICIO -->
-        <div id="tab-ordenes" class="tab-content">
-            <div class="card">
-                <h2>Crear Orden de Servicio</h2>
-                <form id="order-form">
-                    <div class="form-group">
-                        <label>ID Cliente:</label>
-                        <input type="number" id="order_client_id" required placeholder="Ej: 1">
-                    </div>
-                    <div class="form-group">
-                        <label>ID Técnico Asignado:</label>
-                        <input type="number" id="order_tech_id" required placeholder="Ej: 1">
-                    </div>
-                    <div class="form-group">
-                        <label>Equipo / Dispositivo:</label>
-                        <input type="text" id="order_device" placeholder="Ej: Laptop Lenovo ThinkPad" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción del Problema:</label>
-                        <textarea id="order_description" rows="3" required placeholder="Ej: No enciende la pantalla"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">Crear Órden</button>
-                </form>
+      <!-- Navegación: Módulo Técnicos -->
+      <div>
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Técnicos</h2>
+        <nav class="space-y-1">
+          <button onclick="navTo('tecnicos')" id="nav-btn-tecnicos" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 text-sm transition-colors">
+            <span>• Gestión de Técnicos</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Navegación: Módulo Órdenes -->
+      <div>
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Órdenes de Servicio</h2>
+        <nav class="space-y-1">
+          <button onclick="navTo('ordenes')" id="nav-btn-ordenes" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 text-sm transition-colors">
+            <span>• Gestión de Órdenes</span>
+          </button>
+        </nav>
+      </div>
+
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO PRINCIPAL (VISTAS DINÁMICAS)     -->
+    <!-- ========================================== -->
+    <main class="flex-1 p-6 space-y-6">
+      
+      <!-- ========================================== -->
+      <!-- VISTA 1: MÓDULO CLIENTES                   -->
+      <!-- ========================================== -->
+      <div id="view-clientes" class="view-section space-y-6">
+        
+        <!-- Formulario de Registro de Cliente -->
+        <section class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl shadow-sm">
+          <h3 class="font-semibold text-slate-200 text-lg border-b border-slate-700 pb-3 mb-4">Registrar Nuevo Cliente</h3>
+          
+          <form id="client-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Campo: Nombre Completo -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Nombre Completo *</label>
+              <input type="text" id="full_name" required placeholder="Ej. Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
             </div>
 
-            <div class="card">
-                <h2>Lista de Órdenes de Servicio</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Orden</th>
-                            <th>ID Cliente</th>
-                            <th>ID Técnico</th>
-                            <th>Equipo</th>
-                            <th>Problema</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-table-body"></tbody>
-                </table>
+            <!-- Campo: Tipo Documento -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Tipo Documento *</label>
+              <select id="document_type" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+                <option value="CC">Cédula de Ciudadanía (CC)</option>
+                <option value="CE">Cédula de Extranjería (CE)</option>
+                <option value="PP">Pasaporte</option>
+                <option value="NIT">NIT</option>
+              </select>
             </div>
-        </div>
 
-    </div>
+            <!-- Campo: Número Documento -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">N° Documento *</label>
+              <input type="text" id="document_id" required placeholder="Ej. 1088123456" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
 
-    <script src="app.js"></script>
+            <!-- Campo: Correo Electrónico -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Correo Electrónico</label>
+              <input type="email" id="email" placeholder="correo@ejemplo.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <!-- Campo: Teléfono -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono / WhatsApp *</label>
+              <input type="text" id="phone" required placeholder="Ej. 3001234567" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <!-- Campo: Dirección -->
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Dirección *</label>
+              <input type="text" id="direccion" required placeholder="Ej. Calle 15 # 5-12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <!-- Botón Guardar Cliente -->
+            <div class="md:col-span-3 flex justify-end pt-2">
+              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow">
+                Guardar Cliente
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Listado de Clientes Registrados -->
+        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden shadow-sm">
+          <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+            <h3 class="font-semibold text-slate-200">Clientes Registrados</h3>
+            <button onclick="obtenerClientes()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
+              Actualizar Lista
+            </button>
+          </div>
+          <div class="p-6">
+            <ul id="clientes-list" class="space-y-3"></ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- VISTA 2: MÓDULO TÉCNICOS                   -->
+      <!-- ========================================== -->
+      <div id="view-tecnicos" class="view-section space-y-6 hidden">
+        
+        <!-- Formulario de Registro de Técnico -->
+        <section class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl shadow-sm">
+          <h3 class="font-semibold text-slate-200 text-lg border-b border-slate-700 pb-3 mb-4">Registrar Nuevo Técnico</h3>
+          
+          <form id="tecnico-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Nombre Técnico *</label>
+              <input type="text" id="tec-nombre" required placeholder="Ej. Carlos Mendoza" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Especialidad</label>
+              <input type="text" id="tec-especialidad" placeholder="Ej. Hardware / Laptops" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono</label>
+              <input type="text" id="tec-telefono" placeholder="Ej. 3119876543" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="md:col-span-3 flex justify-end pt-2">
+              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow">
+                Guardar Técnico
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Listado de Técnicos Registrados -->
+        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden shadow-sm">
+          <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+            <h3 class="font-semibold text-slate-200">Técnicos Registrados</h3>
+            <button onclick="obtenerTecnicos()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
+              Actualizar Lista
+            </button>
+          </div>
+          <div class="p-6">
+            <ul id="tecnicos-list" class="space-y-3"></ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- VISTA 3: MÓDULO ÓRDENES DE SERVICIO        -->
+      <!-- ========================================== -->
+      <div id="view-ordenes" class="view-section space-y-6 hidden">
+        
+        <!-- Formulario de Nueva Orden -->
+        <section class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl shadow-sm">
+          <h3 class="font-semibold text-slate-200 text-lg border-b border-slate-700 pb-3 mb-4">Nueva Órden de Servicio</h3>
+          
+          <form id="orden-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">ID Cliente *</label>
+              <input type="number" id="ord-cliente-id" required placeholder="Ej. 1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Equipo / Dispositivo *</label>
+              <input type="text" id="ord-equipo" required placeholder="Ej. Laptop Lenovo IdeaPad" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-medium text-slate-400 mb-1">Descripción del Problema / Servicio *</label>
+              <textarea id="ord-descripcion" rows="3" required placeholder="Describa la falla presentada..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500"></textarea>
+            </div>
+            <div class="md:col-span-2 flex justify-end pt-2">
+              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow">
+                Crear Órden
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Listado de Órdenes de Servicio -->
+        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden shadow-sm">
+          <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+            <h3 class="font-semibold text-slate-200">Órdenes de Servicio</h3>
+            <button onclick="obtenerOrdenes()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
+              Actualizar Lista
+            </button>
+          </div>
+          <div class="p-6">
+            <ul id="ordenes-list" class="space-y-3"></ul>
+          </div>
+        </section>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- SCRIPT JS PRINCIPAL -->
+  <script src="app.js"></script>
 </body>
 </html>
