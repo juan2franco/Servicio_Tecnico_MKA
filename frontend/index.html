@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Servicio Técnico</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Centro de Servicio Técnico</h1>
+
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('clientes')">Clientes</button>
+            <button class="tab-btn" onclick="switchTab('tecnicos')">Técnicos</button>
+            <button class="tab-btn" onclick="switchTab('ordenes')">Órdenes de Servicio</button>
+        </div>
+
+        <!--CLIENTES -->
+        <div id="tab-clientes" class="tab-content active">
+            <div class="card">
+                <h2>Registrar Nuevo Cliente</h2>
+                <form id="client-form">
+                    <div class="form-group">
+                        <label>Nombre Completo:</label>
+                        <input type="text" id="client_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Documento:</label>
+                        <select id="client_doc_type" required>
+                            <option value="CC">CC</option>
+                            <option value="CE">CE</option>
+                            <option value="PASAPORTE">Pasaporte</option>
+                            <option value="NIT">NIT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Documento:</label>
+                        <input type="text" id="client_doc_id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono:</label>
+                        <input type="text" id="client_phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico:</label>
+                        <input type="email" id="client_email">
+                    </div>
+                    <button type="submit" class="btn-primary">Guardar Cliente</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Lista de Clientes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Documento</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+       
+       <!--TÉCNICOS -->
+<div id="tab-tecnicos" class="tab-content">
+    <div class="card">
+        <h2>Registrar Nuevo Técnico</h2>
+        <form id="tech-form">
+            <div class="form-group">
+                <label>Nombre Completo:</label>
+                <input type="text" id="tech_name" required>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Documento:</label>
+                <select id="tech_doc_type" required>
+                    <option value="CC">CC</option>
+                    <option value="CE">CE</option>
+                    <option value="PASAPORTE">Pasaporte</option>
+                    <option value="NIT">NIT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Número de Documento:</label>
+                <input type="text" id="tech_doc_id" required>
+            </div>
+            <div class="form-group">
+                <label>Especialidad:</label>
+                <input type="text" id="tech_specialty" placeholder="Ej: Hardware, Pantallas" required>
+            </div>
+            <div class="form-group">
+                <label>Teléfono:</label>
+                <input type="text" id="tech_phone" required>
+            </div>
+            <div class="form-group">
+                <label>Correo Electrónico:</label>
+                <input type="email" id="tech_email">
+            </div>
+            <button type="submit" class="btn-primary">Guardar Técnico</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Lista de Técnicos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Documento</th>
+                    <th>Especialidad</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody id="techs-table-body"></tbody>
+        </table>
+    </div>
+</div>
+
+        <!-- ÓRDENES DE SERVICIO -->
+        <div id="tab-ordenes" class="tab-content">
+            <div class="card">
+                <h2>Crear Orden de Servicio</h2>
+                <form id="order-form">
+                    <div class="form-group">
+                        <label>ID Cliente:</label>
+                        <input type="number" id="order_client_id" required placeholder="Ej: 1">
+                    </div>
+                    <div class="form-group">
+                        <label>ID Técnico Asignado:</label>
+                        <input type="number" id="order_tech_id" required placeholder="Ej: 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Equipo / Dispositivo:</label>
+                        <input type="text" id="order_device" placeholder="Ej: Laptop Lenovo ThinkPad" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción del Problema:</label>
+                        <textarea id="order_description" rows="3" required placeholder="Ej: No enciende la pantalla"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Órden</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Lista de Órdenes de Servicio</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Orden</th>
+                            <th>ID Cliente</th>
+                            <th>ID Técnico</th>
+                            <th>Equipo</th>
+                            <th>Problema</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

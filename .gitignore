@@ -1,0 +1,26 @@
+# entorno virtual (Python / venv)
+venv/
+env/
+ENV/
+.venv/
+
+# caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+#  VS Code y editores
+.vscode/
+.idea/
+*.swp
+
+# Archivos de variables de entorno y credenciales
+.env
+.env.*
+*.pem
+*.key
+
+# Archivos operativo
+.DS_Store
+Thumbs.db
