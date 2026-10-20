@@ -4,195 +4,191 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MKA - Servicio Técnico</title>
-  <!-- Tailwind CSS Compilado -->
   <link rel="stylesheet" href="output.css">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
 
-  <!-- ========================================== -->
-  <!-- BARRA DE NAVEGACIÓN SUPERIOR (HEADER)     -->
-  <!-- ========================================== -->
+  <!-- HEADER GLOBAL -->
   <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-md">
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="navTo('landing')">
       <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl tracking-wider">MKA</div>
-      <h1 class="text-lg font-semibold text-slate-200">Panel de Servicio Técnico</h1>
+      <h1 class="text-lg font-semibold text-slate-200">Servicio Técnico</h1>
     </div>
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-      API Conectada
-    </span>
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        Modo Prototipo
+      </span>
+      <button onclick="navTo('landing')" id="btn-logout" class="hidden text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-600 transition-colors">
+        Cerrar Sesión / Cambiar Rol
+      </button>
+    </div>
   </header>
 
-  <div class="flex flex-1">
+  <main class="flex-1 p-6">
+
+   
+    <!--  PÁGINA INICIAL / SELECCIÓN DE ROL   -->
+    <div id="view-landing" class="view-section max-w-4xl mx-auto py-12 space-y-8 text-center">
+      <div>
+        <h2 class="text-3xl font-bold text-slate-100 mb-2">Bienvenido a MKA Servicio Técnico</h2>
+        <p class="text-slate-400 text-sm">Selecciona cómo deseas ingresar al sistema</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+        <!-- Tarjeta Usuario -->
+        <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl hover:border-indigo-500 transition-all shadow-lg flex flex-col items-center">
+          <div class="w-16 h-16 bg-indigo-600/20 text-indigo-400 rounded-full flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Área de Clientes</h3>
+          <p class="text-slate-400 text-xs mb-6">Consulta el estado de tus equipos, gestiona tus órdenes de servicio y tus datos.</p>
+          <div class="flex gap-3 w-full">
+            <button onclick="navTo('auth-cliente-login')" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-lg text-sm font-medium transition-colors">Iniciar Sesión</button>
+            <button onclick="navTo('auth-cliente-register')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 py-2.5 rounded-lg text-sm font-medium transition-colors">Registrarse</button>
+          </div>
+        </div>
+
+        <!-- Tarjeta Técnico -->
+        <div class="bg-slate-800 border border-slate-700 p-8 rounded-2xl hover:border-emerald-500 transition-all shadow-lg flex flex-col items-center">
+          <div class="w-16 h-16 bg-emerald-600/20 text-emerald-400 rounded-full flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.654-4.654m0 0a3.003 3.003 0 0 1 0-4.243l3.03-2.496a3.003 3.003 0 0 1 4.243 0l.707.707a3.003 3.003 0 0 1 0 4.243l-2.496 3.03" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Área de Técnicos</h3>
+          <p class="text-slate-400 text-xs mb-6">Accede a las órdenes asignadas, actualiza diagnósticos y registra reparaciones.</p>
+          <div class="flex gap-3 w-full">
+            <button onclick="navTo('auth-tecnico-login')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-medium transition-colors">Iniciar Sesión</button>
+            <button onclick="navTo('auth-tecnico-register')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 py-2.5 rounded-lg text-sm font-medium transition-colors">Registrarse</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     
-    <!-- ========================================== -->
-    <!-- MENÚ LATERAL (SIDEBAR DE NAVEGACIÓN)      -->
-    <!-- ========================================== -->
-    <aside class="w-64 bg-slate-800/50 border-r border-slate-700 p-4 flex flex-col gap-6 hidden md:flex">
-      
-      <!-- Navegación: Módulo Clientes -->
-      <div>
-        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Clientes</h2>
-        <nav class="space-y-1">
-          <button onclick="navTo('clientes')" id="nav-btn-clientes" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-600/20 text-indigo-400 font-medium border border-indigo-500/30 text-sm transition-colors">
-            <span>• Gestión de Clientes</span>
-          </button>
-        </nav>
+    <!--  FORMULARIOS DE ACCESO (CLIENTES)    -->
+
+
+    <!-- Login Cliente -->
+    <div id="view-auth-cliente-login" class="view-section hidden max-w-md mx-auto py-12">
+      <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg space-y-4">
+        <h3 class="text-lg font-semibold text-center text-slate-100">Iniciar Sesión - Cliente</h3>
+        <form onsubmit="simularLogin(event, 'dashboard-cliente')" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">N° Documento</label>
+            <input type="text" placeholder="Ej. 1088123456" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+          </div>
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 rounded-lg text-sm font-medium">Ingresar al Panel</button>
+        </form>
+        <button onclick="navTo('landing')" class="w-full text-xs text-slate-400 hover:text-slate-200 text-center block">← Volver al inicio</button>
+      </div>
+    </div>
+
+    <!-- Registro Cliente -->
+    <div id="view-auth-cliente-register" class="view-section hidden max-w-2xl mx-auto py-8">
+      <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg space-y-4">
+        <h3 class="text-lg font-semibold text-slate-100 border-b border-slate-700 pb-3">Registro de Cliente</h3>
+        <form id="client-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Nombre Completo *</label>
+            <input type="text" id="full_name" required placeholder="Ej. Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Tipo Documento *</label>
+            <select id="document_type" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+              <option value="CC">Cédula de Ciudadanía (CC)</option>
+              <option value="CE">Cédula de Extranjería (CE)</option>
+              <option value="PP">Pasaporte</option>
+              <option value="NIT">NIT</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">N° Documento *</label>
+            <input type="text" id="document_id" required placeholder="Ej. 1088123456" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Correo Electrónico</label>
+            <input type="email" id="email" placeholder="correo@ejemplo.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono / WhatsApp *</label>
+            <input type="text" id="phone" required placeholder="Ej. 3001234567" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Dirección *</label>
+            <input type="text" id="direccion" required placeholder="Ej. Calle 15 # 5-12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
+          </div>
+          <div class="md:col-span-2 flex justify-between items-center pt-2">
+            <button type="button" onclick="navTo('landing')" class="text-xs text-slate-400 hover:text-slate-200">← Volver</button>
+            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">Guardar y Continuar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    
+    <!--  FORMULARIOS DE ACCESO (TÉCNICOS)   -->
+  
+
+    <!-- Login Técnico -->
+    <div id="view-auth-tecnico-login" class="view-section hidden max-w-md mx-auto py-12">
+      <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg space-y-4">
+        <h3 class="text-lg font-semibold text-center text-slate-100">Iniciar Sesión - Técnico</h3>
+        <form onsubmit="simularLogin(event, 'dashboard-tecnico')" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">ID o Código de Técnico</label>
+            <input type="text" placeholder="Ej. TEC-01" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-emerald-500">
+          </div>
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-medium">Ingresar al Panel Técnico</button>
+        </form>
+        <button onclick="navTo('landing')" class="w-full text-xs text-slate-400 hover:text-slate-200 text-center block">← Volver al inicio</button>
+      </div>
+    </div>
+
+    <!-- Registro Técnico -->
+    <div id="view-auth-tecnico-register" class="view-section hidden max-w-md mx-auto py-8">
+      <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg space-y-4">
+        <h3 class="text-lg font-semibold text-slate-100 border-b border-slate-700 pb-3">Registro de Técnico</h3>
+        <form id="tecnico-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Nombre Completo *</label>
+            <input type="text" id="tec-nombre" required placeholder="Ej. Carlos Mendoza" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Especialidad</label>
+            <input type="text" id="tec-especialidad" placeholder="Ej. Hardware / Laptops" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono</label>
+            <input type="text" id="tec-telefono" placeholder="Ej. 3119876543" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-emerald-500">
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <button type="button" onclick="navTo('landing')" class="text-xs text-slate-400 hover:text-slate-200">← Volver</button>
+            <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors">Guardar Técnico</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  
+    <!-- DASHBOARD USUARIO (CLIENTE)    -->
+    
+    <div id="view-dashboard-cliente" class="view-section hidden space-y-6">
+      <div class="flex border-b border-slate-700 pb-3 justify-between items-center">
+        <h2 class="text-xl font-bold text-slate-100">Mi Panel de Cliente</h2>
+        <div class="flex gap-2">
+          <button onclick="switchTabCliente('ordenes')" id="tab-cli-ordenes" class="px-3 py-1.5 rounded-lg text-sm bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">Órdenes</button>
+          <button onclick="switchTabCliente('dispositivos')" id="tab-cli-dispositivos" class="px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800">Dispositivos</button>
+          <button onclick="switchTabCliente('datos')" id="tab-cli-datos" class="px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800">Mis Datos</button>
+        </div>
       </div>
 
-      <!-- Navegación: Módulo Técnicos -->
-      <div>
-        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Técnicos</h2>
-        <nav class="space-y-1">
-          <button onclick="navTo('tecnicos')" id="nav-btn-tecnicos" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 text-sm transition-colors">
-            <span>• Gestión de Técnicos</span>
-          </button>
-        </nav>
-      </div>
-
-      <!-- Navegación: Módulo Órdenes -->
-      <div>
-        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">Órdenes de Servicio</h2>
-        <nav class="space-y-1">
-          <button onclick="navTo('ordenes')" id="nav-btn-ordenes" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 text-sm transition-colors">
-            <span>• Gestión de Órdenes</span>
-          </button>
-        </nav>
-      </div>
-
-    </aside>
-
-    <!-- ========================================== -->
-    <!-- CONTENIDO PRINCIPAL (VISTAS DINÁMICAS)     -->
-    <!-- ========================================== -->
-    <main class="flex-1 p-6 space-y-6">
-      
-      <!-- ========================================== -->
-      <!-- VISTA 1: MÓDULO CLIENTES                   -->
-      <!-- ========================================== -->
-      <div id="view-clientes" class="view-section space-y-6">
-        
-        <!-- Formulario de Registro de Cliente -->
+      <!-- Tab Órdenes Cliente -->
+      <div id="subview-cli-ordenes" class="space-y-6">
         <section class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl shadow-sm">
-          <h3 class="font-semibold text-slate-200 text-lg border-b border-slate-700 pb-3 mb-4">Registrar Nuevo Cliente</h3>
-          
-          <form id="client-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Campo: Nombre Completo -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Nombre Completo *</label>
-              <input type="text" id="full_name" required placeholder="Ej. Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- Campo: Tipo Documento -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Tipo Documento *</label>
-              <select id="document_type" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-                <option value="CC">Cédula de Ciudadanía (CC)</option>
-                <option value="CE">Cédula de Extranjería (CE)</option>
-                <option value="PP">Pasaporte</option>
-                <option value="NIT">NIT</option>
-              </select>
-            </div>
-
-            <!-- Campo: Número Documento -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">N° Documento *</label>
-              <input type="text" id="document_id" required placeholder="Ej. 1088123456" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- Campo: Correo Electrónico -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Correo Electrónico</label>
-              <input type="email" id="email" placeholder="correo@ejemplo.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- Campo: Teléfono -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono / WhatsApp *</label>
-              <input type="text" id="phone" required placeholder="Ej. 3001234567" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- Campo: Dirección -->
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Dirección *</label>
-              <input type="text" id="direccion" required placeholder="Ej. Calle 15 # 5-12" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-
-            <!-- Botón Guardar Cliente -->
-            <div class="md:col-span-3 flex justify-end pt-2">
-              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow">
-                Guardar Cliente
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <!-- Listado de Clientes Registrados -->
-        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden shadow-sm">
-          <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-            <h3 class="font-semibold text-slate-200">Clientes Registrados</h3>
-            <button onclick="obtenerClientes()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
-              Actualizar Lista
-            </button>
-          </div>
-          <div class="p-6">
-            <ul id="clientes-list" class="space-y-3"></ul>
-          </div>
-        </section>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- VISTA 2: MÓDULO TÉCNICOS                   -->
-      <!-- ========================================== -->
-      <div id="view-tecnicos" class="view-section space-y-6 hidden">
-        
-        <!-- Formulario de Registro de Técnico -->
-        <section class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl shadow-sm">
-          <h3 class="font-semibold text-slate-200 text-lg border-b border-slate-700 pb-3 mb-4">Registrar Nuevo Técnico</h3>
-          
-          <form id="tecnico-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Nombre Técnico *</label>
-              <input type="text" id="tec-nombre" required placeholder="Ej. Carlos Mendoza" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Especialidad</label>
-              <input type="text" id="tec-especialidad" placeholder="Ej. Hardware / Laptops" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Teléfono</label>
-              <input type="text" id="tec-telefono" placeholder="Ej. 3119876543" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
-            </div>
-            <div class="md:col-span-3 flex justify-end pt-2">
-              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow">
-                Guardar Técnico
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <!-- Listado de Técnicos Registrados -->
-        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden shadow-sm">
-          <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-            <h3 class="font-semibold text-slate-200">Técnicos Registrados</h3>
-            <button onclick="obtenerTecnicos()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
-              Actualizar Lista
-            </button>
-          </div>
-          <div class="p-6">
-            <ul id="tecnicos-list" class="space-y-3"></ul>
-          </div>
-        </section>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- VISTA 3: MÓDULO ÓRDENES DE SERVICIO        -->
-      <!-- ========================================== -->
-      <div id="view-ordenes" class="view-section space-y-6 hidden">
-        
-        <!-- Formulario de Nueva Orden -->
-        <section class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl shadow-sm">
-          <h3 class="font-semibold text-slate-200 text-lg border-b border-slate-700 pb-3 mb-4">Nueva Órden de Servicio</h3>
-          
+          <h3 class="font-semibold text-slate-200 text-md border-b border-slate-700 pb-3 mb-4">Crear Nueva Órden de Servicio</h3>
           <form id="orden-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">ID Cliente *</label>
@@ -203,35 +199,79 @@
               <input type="text" id="ord-equipo" required placeholder="Ej. Laptop Lenovo IdeaPad" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500">
             </div>
             <div class="md:col-span-2">
-              <label class="block text-xs font-medium text-slate-400 mb-1">Descripción del Problema / Servicio *</label>
-              <textarea id="ord-descripcion" rows="3" required placeholder="Describa la falla presentada..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500"></textarea>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Descripción del Problema *</label>
+              <textarea id="ord-descripcion" rows="2" required placeholder="Falla detectada..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-indigo-500"></textarea>
             </div>
-            <div class="md:col-span-2 flex justify-end pt-2">
-              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow">
-                Crear Órden
-              </button>
+            <div class="md:col-span-2 flex justify-end">
+              <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">Crear Órden</button>
             </div>
           </form>
         </section>
 
-        <!-- Listado de Órdenes de Servicio -->
-        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden shadow-sm">
-          <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-            <h3 class="font-semibold text-slate-200">Órdenes de Servicio</h3>
-            <button onclick="obtenerOrdenes()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
-              Actualizar Lista
-            </button>
-          </div>
-          <div class="p-6">
-            <ul id="ordenes-list" class="space-y-3"></ul>
-          </div>
+        <section class="bg-slate-800 border border-slate-700/60 rounded-xl overflow-hidden p-6">
+          <h3 class="font-semibold text-slate-200 mb-4">Mis Órdenes Registradas</h3>
+          <ul id="ordenes-list" class="space-y-3"></ul>
         </section>
       </div>
 
-    </main>
-  </div>
+      <!-- Tab Dispositivos Cliente -->
+      <div id="subview-cli-dispositivos" class="hidden space-y-4">
+        <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl">
+          <h3 class="font-semibold text-slate-200 mb-2">Mis Equipos en Mantenimiento</h3>
+          <p class="text-xs text-slate-400">Aquí aparecerá la lista de computadores, laptops o pantallas asociadas a tus servicios.</p>
+        </div>
+      </div>
 
-  <!-- SCRIPT JS PRINCIPAL -->
+      <!-- Tab Mis Datos Cliente -->
+      <div id="subview-cli-datos" class="hidden space-y-4">
+        <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl space-y-3">
+          <h3 class="font-semibold text-slate-200 border-b border-slate-700 pb-2">Información Personal del Cliente</h3>
+          <p class="text-sm text-slate-300"><strong>Nombre:</strong> Juan Pérez</p>
+          <p class="text-sm text-slate-300"><strong>Documento:</strong> CC - 1088123456</p>
+          <p class="text-sm text-slate-300"><strong>Teléfono:</strong> 3001234567</p>
+          <p class="text-sm text-slate-300"><strong>Correo:</strong> juan.perez@ejemplo.com</p>
+          <p class="text-sm text-slate-300"><strong>Dirección:</strong> Calle 15 # 5-12</p>
+        </div>
+      </div>
+    </div>
+
+   
+    <!--  DASHBOARD TÉCNICO   -->
+    
+    <div id="view-dashboard-tecnico" class="view-section hidden space-y-6">
+      <div class="flex border-b border-slate-700 pb-3 justify-between items-center">
+        <h2 class="text-xl font-bold text-slate-100">Panel Técnico de Reparaciones</h2>
+        <div class="flex gap-2">
+          <button onclick="switchTabTecnico('ordenes')" id="tab-tec-ordenes" class="px-3 py-1.5 rounded-lg text-sm bg-emerald-600/20 text-emerald-400 border border-emerald-500/30">Órdenes Asignadas</button>
+          <button onclick="switchTabTecnico('datos')" id="tab-tec-datos" class="px-3 py-1.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800">Mis Datos</button>
+        </div>
+      </div>
+
+      <!-- Tab Órdenes Técnico -->
+      <div id="subview-tec-ordenes" class="space-y-4">
+        <section class="bg-slate-800 border border-slate-700/60 rounded-xl p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="font-semibold text-slate-200">Órdenes Disponibles para Mantenimiento</h3>
+            <button onclick="obtenerOrdenesTecnico()" class="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 rounded-lg transition-colors">Actualizar Lista</button>
+          </div>
+          <ul id="tecnico-ordenes-list" class="space-y-3"></ul>
+        </section>
+      </div>
+
+      <!-- Tab Mis Datos Técnico -->
+      <div id="subview-tec-datos" class="hidden space-y-4">
+        <div class="bg-slate-800 border border-slate-700/60 p-6 rounded-xl space-y-3">
+          <h3 class="font-semibold text-slate-200 border-b border-slate-700 pb-2">Información del Técnico</h3>
+          <p class="text-sm text-slate-300"><strong>Técnico:</strong> Carlos Mendoza</p>
+          <p class="text-sm text-slate-300"><strong>Especialidad:</strong> Hardware / Laptops / Displays</p>
+          <p class="text-sm text-slate-300"><strong>Teléfono / WhatsApp:</strong> 3119876543</p>
+          <p class="text-sm text-slate-300"><strong>Estado:</strong> <span class="text-emerald-400 font-medium">Disponible</span></p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
   <script src="app.js"></script>
 </body>
 </html>
