@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "build:css": "npx --yes @tailwindcss/cli@4.3.3 -i ./styles.css -o ./output.css",
+    "watch:css": "npx --yes @tailwindcss/cli@4.3.3 -i ./styles.css -o ./output.css --watch"
+  },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "postcss": "^8.5.31",
