@@ -11,7 +11,7 @@
   <!-- HEADER GLOBAL -->
   <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-lg">
     <div class="flex items-center gap-3 cursor-pointer group" onclick="navTo('landing')">
-      <div class="bg-gradient-to-tr from-indigo-600 to-violet-500 text-white p-2.5 rounded-xl font-black text-xl tracking-wider shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">MKA</div>
+      <div class="bg-gradient-to-tr from-indigo-600 to-blue-500 text-white p-2.5 rounded-xl font-black text-xl tracking-wider shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">MKA</div>
       <div>
         <h1 class="text-lg font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">Servicio Técnico</h1>
         <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Plataforma de Gestión</p>
@@ -73,9 +73,7 @@
       </div>
     </div>
 
-    <!-- FORMULARIOS DE ACCESO (CLIENTES) -->
-
-    <!-- Login Cliente -->
+    <!-- LOGIN CLIENTE -->
     <div id="view-auth-cliente-login" class="view-section hidden max-w-md mx-auto py-12">
       <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
         <h3 class="text-xl font-bold text-center text-slate-100">Iniciar Sesión - Cliente</h3>
@@ -90,7 +88,7 @@
       </div>
     </div>
 
-    <!-- Registro Cliente -->
+    <!-- REGISTRO CLIENTE -->
     <div id="view-auth-cliente-register" class="view-section hidden max-w-2xl mx-auto py-8">
       <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
         <h3 class="text-xl font-bold text-slate-100 border-b border-slate-800 pb-4">Registro de Cliente</h3>
@@ -132,9 +130,7 @@
       </div>
     </div>
 
-    <!-- FORMULARIOS DE ACCESO (TÉCNICOS) -->
-
-    <!-- Login Técnico -->
+    <!-- LOGIN TÉCNICO -->
     <div id="view-auth-tecnico-login" class="view-section hidden max-w-md mx-auto py-12">
       <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
         <h3 class="text-xl font-bold text-center text-slate-100">Iniciar Sesión - Técnico</h3>
@@ -149,7 +145,7 @@
       </div>
     </div>
 
-    <!-- Registro Técnico -->
+    <!-- REGISTRO TÉCNICO -->
     <div id="view-auth-tecnico-register" class="view-section hidden max-w-md mx-auto py-8">
       <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
         <h3 class="text-xl font-bold text-slate-100 border-b border-slate-800 pb-4">Registro de Técnico</h3>
@@ -174,7 +170,7 @@
       </div>
     </div>
 
-    <!-- DASHBOARD USUARIO (CLIENTE) -->
+    <!-- DASHBOARD CLIENTE -->
     <div id="view-dashboard-cliente" class="view-section hidden space-y-6">
       <div class="flex border-b border-slate-800 pb-4 justify-between items-center">
         <h2 class="text-2xl font-bold text-slate-100">Mi Panel de Cliente</h2>
@@ -222,15 +218,15 @@
         </div>
       </div>
 
-      <!-- Tab Mis Datos Cliente -->
+      <!-- Tab Mis Datos Cliente (Dinámico) -->
       <div id="subview-cli-datos" class="hidden space-y-4">
         <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-4">
           <h3 class="font-bold text-slate-100 border-b border-slate-800 pb-3">Información Personal del Cliente</h3>
-          <p class="text-sm text-slate-300"><strong>Nombre:</strong> Juan Pérez</p>
-          <p class="text-sm text-slate-300"><strong>Documento:</strong> CC - 1088123456</p>
-          <p class="text-sm text-slate-300"><strong>Teléfono:</strong> 3001234567</p>
-          <p class="text-sm text-slate-300"><strong>Correo:</strong> juan.perez@ejemplo.com</p>
-          <p class="text-sm text-slate-300"><strong>Dirección:</strong> Calle 15 # 5-12</p>
+          <p class="text-sm text-slate-300"><strong>Nombre:</strong> <span id="perfil-nombre">-</span></p>
+          <p class="text-sm text-slate-300"><strong>Documento:</strong> <span id="perfil-doc-tipo">-</span> - <span id="perfil-doc-id">-</span></p>
+          <p class="text-sm text-slate-300"><strong>Teléfono / WhatsApp:</strong> <span id="perfil-telefono">-</span></p>
+          <p class="text-sm text-slate-300"><strong>Correo:</strong> <span id="perfil-correo">-</span></p>
+          <p class="text-sm text-slate-300"><strong>Dirección:</strong> <span id="perfil-direccion">-</span></p>
         </div>
       </div>
     </div>

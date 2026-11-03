@@ -6,7 +6,7 @@ body {
     padding: 0;
 }
 
-/* Menú  */
+/* Clases básicas de navegación y vistas */
 .tabs {
     display: flex;
     gap: 10px;
@@ -35,7 +35,6 @@ body {
     color: white;
 }
 
-/* Pestañas */
 .tab-content {
     display: none;
 }

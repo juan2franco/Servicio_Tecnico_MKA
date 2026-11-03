@@ -1,11 +1,17 @@
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.orders import router as orders_router
 from app.api.tecnicos import router as tecnicos_router
 from app.api.clients import router as clients_router
 
-app = FastAPI(title="Centro de servicio tecnico API")
+import database
+import models
+
+# Crear las tablas en la base de datos
+models.Base.metadata.create_all(bind=database.engine)
+
+app = FastAPI(title="Centro de servicio tecnico API - MKA")
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,18 +20,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(clients_router)
-app.include_router(orders_router)
-app.include_router(tecnicos_router)
+# Forzamos el prefijo /clients aquí mismo
+app.include_router(clients_router, prefix="/clients", tags=["Clients"])
+app.include_router(orders_router, prefix="/orders", tags=["Orders"])        # <--- Asegúrate de que tenga prefix="/orders"
+app.include_router(tecnicos_router, prefix="/tecnicos", tags=["Tecnicos"])
 
 @app.get("/")
 def root():
-    return {"message": "API Activa y optima"}
-
-
-
-
-    
-    
-    
+    return {"message": "API Activa y óptima - MKA Servicio Técnico"}

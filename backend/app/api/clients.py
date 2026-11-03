@@ -3,8 +3,8 @@ from app.schemas.client import ClientCreate, ClientResponse
 from typing import List
 
 router = APIRouter(
-    prefix="/Clientes",
-    tags=["Clientes de servicio"]
+    prefix="",
+    tags=["Orders"]
 )
 
 client_db = [
@@ -17,7 +17,6 @@ client_db = [
     "email": "carlos@gmail.com",
     "direccion": "Calle 15 # 5-12"
      }
-     
 ]
 
 @router.post("/", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
@@ -31,10 +30,8 @@ def create_client(client: ClientCreate):
         "phone": client.phone,
         "email": client.email,
         "direccion": client.direccion
-        
     }
     client_db.append(new_client)   
-    # Mirar que hace esto
     return new_client
 
 @router.get("/", response_model=List[ClientResponse])
@@ -77,6 +74,3 @@ def delete_client(client_id: int):
         status_code=status.HTTP_404_NOT_FOUND,
         detail="No se encontro el cliente"
     )
-    
-    
-    
