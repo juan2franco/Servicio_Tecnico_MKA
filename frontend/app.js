@@ -220,7 +220,7 @@ async function fetchOrdenes() {
     if (!listContainer) return;
 
     try {
-        const response = await fetch(`${API_URL}/orders/`);
+        const response = await fetch(`${API_URL}/ordenes/`);
         if (!response.ok) throw new Error("Error al obtener órdenes");
         const ordenes = await response.json();
 
@@ -252,7 +252,7 @@ async function obtenerOrdenesTecnico() {
     if (!listContainer) return;
 
     try {
-        const response = await fetch(`${API_URL}/orders/`);
+        const response = await fetch(`${API_URL}/ordenes/`);
         if (!response.ok) throw new Error("Error al obtener órdenes");
         const ordenes = await response.json();
 
