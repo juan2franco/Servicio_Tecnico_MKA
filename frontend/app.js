@@ -81,12 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Intentando registrar cliente...");
 
             const data = {
-                full_name: document.getElementById("full_name").value,
-                document_type: document.getElementById("document_type").value,
-                document_id: document.getElementById("document_id").value,
-                email: document.getElementById("email").value,
-                phone: document.getElementById("phone").value,
-                direccion: document.getElementById("direccion").value
+                full_name: document.getElementById("full_name")?.value || "",
+                document_type: document.getElementById("document_type")?.value || "CC",
+                document_id: document.getElementById("document_id")?.value || "",
+                email: document.getElementById("email")?.value || "",
+                phone: document.getElementById("phone")?.value || "",
+                direccion: document.getElementById("direccion")?.value || ""
             };
 
             try {
@@ -98,7 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if (!response.ok) {
                     const errData = await response.json();
-                    throw new Error(errData.detail || "Error al registrar cliente");
+                    let mensaje = errData.detail;
+                    if (Array.isArray(mensaje)) {
+                        mensaje = mensaje.map(err => `${err.loc.join('.')}: ${err.msg}`).join(' | ');
+                    }
+                    throw new Error(mensaje || "Error al registrar cliente");
                 }
 
                 const clienteCreado = await response.json();
@@ -124,9 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Intentando registrar técnico...");
 
             const data = {
-                nombre: document.getElementById("tec-nombre").value,
-                especialidad: document.getElementById("tec-especialidad").value,
-                telefono: document.getElementById("tec-telefono").value
+                nombre: document.getElementById("tec-nombre")?.value || "",
+                especialidad: document.getElementById("tec-especialidad")?.value || "",
+                telefono: document.getElementById("tec-telefono")?.value || ""
             };
 
             try {
@@ -138,7 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!response.ok) {
                     const errData = await response.json();
-                    throw new Error(errData.detail || "Error al registrar técnico");
+                    let mensaje = errData.detail;
+                    if (Array.isArray(mensaje)) {
+                        mensaje = mensaje.map(err => `${err.loc.join('.')}: ${err.msg}`).join(' | ');
+                    }
+                    throw new Error(mensaje || "Error al registrar técnico");
                 }
 
                 alert("¡Técnico registrado con éxito!");
@@ -151,61 +159,79 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    // Crear Órden de Servicio (POST)
-    const ordenForm = document.getElementById("orden-form");
-    if (ordenForm) {
-        ordenForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            console.log("Intentando crear orden de servicio...");
-
-            const data = {
-                cliente_id: parseInt(document.getElementById("ord-cliente-id").value),
-                equipo: document.getElementById("ord-equipo").value,
-                descripcion: document.getElementById("ord-descripcion").value,
-                estado: "Solicitado"
-            };
-
-            try {
-                const response = await fetch(`${API_URL}/orders/`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.detail || "Error al crear orden");
-                }
-
-                alert("¡Orden de servicio creada con éxito!");
-                ordenForm.reset();
-                fetchOrdenes();
-            } catch (error) {
-                console.error("Error en orden:", error);
-                alert("Error al crear la orden. Revisa que el ID del cliente exista: " + error.message);
-            }
-        });
-    }
 });
 
 // ==========================================
-// 3. FUNCIONES GLOBALES DE CONSULTA Y PERFIL
+// 3. CAPTURA DE ÓRDENES Y CONSULTAS
 // ==========================================
+
+document.addEventListener("click", async (e) => {
+    const targetText = e.target.textContent.trim().toLowerCase();
+    if (e.target && (e.target.id === "btn-crear-orden" || targetText.includes("crear órden") || targetText.includes("crear orden"))) {
+        e.preventDefault();
+        console.log("¡Clic detectado en botón de crear orden!");
+
+        const clienteIdInput = document.getElementById("ord-cliente-id") || document.getElementById("cliente_id");
+        const equipoInput = document.getElementById("ord-equipo") || document.getElementById("equipo");
+        const descripcionInput = document.getElementById("ord-descripcion") || document.getElementById("descripcion");
+
+        if (!clienteIdInput || !equipoInput || !descripcionInput) {
+            alert("Error: Faltan campos en el formulario de órdenes. Revisa los IDs de los inputs.");
+            return;
+        }
+
+        const data = {
+            cliente_id: parseInt(clienteIdInput.value),
+            equipo: equipoInput.value,
+            descripcion: descripcionInput.value,
+            estado: "Solicitado"
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/orders/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                let mensaje = errData.detail;
+                if (Array.isArray(mensaje)) {
+                    mensaje = mensaje.map(err => `${err.loc.join('.')}: ${err.msg}`).join(' | ');
+                }
+                throw new Error(mensaje || "Error al crear orden");
+            }
+
+            alert("¡Orden de servicio creada con éxito!");
+            
+            const ordenForm = document.getElementById("orden-form");
+            if (ordenForm) ordenForm.reset();
+
+            fetchOrdenes();
+        } catch (error) {
+            console.error("Error en orden:", error);
+            alert("Error al crear la orden: " + error.message);
+        }
+    }
+});
 
 function cargarDatosCliente() {
     const clienteGuardado = localStorage.getItem("clienteActivo");
     if (!clienteGuardado) return;
     try {
         const cli = JSON.parse(clienteGuardado);
-        document.getElementById("perfil-nombre").textContent = cli.full_name || "-";
-        document.getElementById("perfil-doc-tipo").textContent = cli.document_type || "-";
-        document.getElementById("perfil-doc-id").textContent = cli.document_id || "-";
-        document.getElementById("perfil-telefono").textContent = cli.phone || "-";
-        document.getElementById("perfil-correo").textContent = cli.email || "-";
-        document.getElementById("perfil-direccion").textContent = cli.direccion || "-";
+        const setTexto = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val || "-";
+        };
+        setTexto("perfil-nombre", cli.full_name);
+        setTexto("perfil-doc-tipo", cli.document_type);
+        setTexto("perfil-doc-id", cli.document_id);
+        setTexto("perfil-telefono", cli.phone);
+        setTexto("perfil-correo", cli.email);
+        setTexto("perfil-direccion", cli.direccion);
         
-        // Autocompletar opcionalmente el ID del cliente en el formulario de órdenes si existe
         const ordClienteInput = document.getElementById("ord-cliente-id");
         if (ordClienteInput && cli.id) {
             ordClienteInput.value = cli.id;
@@ -220,7 +246,7 @@ async function fetchOrdenes() {
     if (!listContainer) return;
 
     try {
-        const response = await fetch(`${API_URL}/ordenes/`);
+        const response = await fetch(`${API_URL}/orders/`);
         if (!response.ok) throw new Error("Error al obtener órdenes");
         const ordenes = await response.json();
 
@@ -252,7 +278,7 @@ async function obtenerOrdenesTecnico() {
     if (!listContainer) return;
 
     try {
-        const response = await fetch(`${API_URL}/ordenes/`);
+        const response = await fetch(`${API_URL}/orders/`);
         if (!response.ok) throw new Error("Error al obtener órdenes");
         const ordenes = await response.json();
 
