@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
-from datetime import datetime
 
 class ClienteModel(Base):
     __tablename__ = "clients"
@@ -22,11 +21,11 @@ class TecnicoModel(Base):
     __tablename__ = "tecnicos"
 
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String(100), nullable=False)
-    especialidad = Column(String(100), nullable=True)
-    phone = Column(String(20), nullable=True)
+    nombre = Column(String(100), nullable=False) # Coincide con tu BD
     document_type = Column(String(10), default="CC")
     document_id = Column(String(20), unique=True, index=True, nullable=False)
+    telefono = Column(String(20), nullable=True) # Coincide con tu BD
+    especialidad = Column(String(100), nullable=True)
     password = Column(String(100), nullable=False)
 
     ordenes = relationship("OrdenModel", back_populates="tecnico")
@@ -47,12 +46,13 @@ class OrdenModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     cliente_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
-    tecnico_id = Column(Integer, ForeignKey("tecnicos.id"), nullable=True) # Puede ser NULL si nadie la ha tomado
+    tecnico_id = Column(Integer, ForeignKey("tecnicos.id"), nullable=True)
     equipo = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=False)
     presupuesto = Column(Float, default=0.0)
-    estado = Column(String(50), default="Solicitado") # Solicitado, En Reparación, Finalizado
-    avance_realtime = Column(Text, default="Orden creada y a la espera de técnico.") # Avance continuo
+    estado = Column(String(50), default="Solicitado")
+    aprobado_cliente = Column(Integer, default=0)
+    avance_realtime = Column(Text, default="Orden creada y a la espera de técnico.")
 
     cliente = relationship("ClienteModel", back_populates="ordenes")
     tecnico = relationship("TecnicoModel", back_populates="ordenes")

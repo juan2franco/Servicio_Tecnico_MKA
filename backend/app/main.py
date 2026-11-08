@@ -18,10 +18,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Forzamos los prefijos exactos aquí en minúsculas e inglés
-app.include_router(clients_router, prefix="/clients", tags=["Clients"])
-app.include_router(orders_router, prefix="/orders", tags=["Orders"])
-app.include_router(tecnicos_router, prefix="/tecnicos", tags=["Tecnicos"])
+# Incluimos los routers directamente (el prefijo ya lo maneja cada archivo api)
+app.include_router(clients_router)
+app.include_router(orders_router)
+app.include_router(tecnicos_router)
 
 @app.get("/")
 def root():
