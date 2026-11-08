@@ -1,31 +1,56 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.schemas.client import ClientCreate, ClientResponse
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List
 from database import get_db
 import models
-from typing import List
 
-router = APIRouter(
-    prefix="",  # Vacío para que tome el prefijo /clients definido en el main.py
-    tags=["Clientes de servicio"]
-)
+router = APIRouter(prefix="", tags=["Clientes"])
+
+class ClientCreate(BaseModel):
+    full_name: str
+    document_type: str = "CC"
+    document_id: str
+    email: Optional[str] = None
+    phone: str
+    direccion: str
+    password: str
+
+class ClientResponse(BaseModel):
+    id: int
+    full_name: str
+    document_type: str
+    document_id: str
+    email: Optional[str] = None
+    phone: str
+    direccion: str
+    password: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 @router.post("/", response_model=ClientResponse, status_code=status.HTTP_201_CREATED)
 def create_client(client: ClientCreate, db: Session = Depends(get_db)):
+    existing = db.query(models.ClienteModel).filter(models.ClienteModel.document_id == client.document_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe un cliente registrado con este número de documento.")
+
     db_client = models.ClienteModel(
         full_name=client.full_name,
         document_type=client.document_type,
         document_id=client.document_id,
-        phone=client.phone,
         email=client.email,
-        direccion=client.direccion
+        phone=client.phone,
+        direccion=client.direccion,
+        password=client.password
     )
+    
     db.add(db_client)
     db.commit()
     db.refresh(db_client)
+    
     return db_client
 
 @router.get("/", response_model=List[ClientResponse])
 def list_clients(db: Session = Depends(get_db)):
-    clients = db.query(models.ClienteModel).all()
-    return clients
+    return db.query(models.ClienteModel).all()

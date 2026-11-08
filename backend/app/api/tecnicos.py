@@ -1,79 +1,75 @@
-from fastapi import APIRouter, HTTPException, status
-from app.schemas.tecnicos import TecnicoCreate, TecnicoResponse
-from typing import List
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from typing import Optional, List
+from database import get_db
+import models
 
-router = APIRouter(
-    prefix="/Tecnicos",
-    tags=["Tecnicos de servicio"]
-)
+router = APIRouter(prefix="", tags=["Tecnicos de servicio"])
 
-tecnico_db = [
-    {
-    "id": 1,
-    "full_name": "Jaime",
-    "document_type": "CC",
-    "especiality": "Hardware",
-    "document_id": "1008776554",
-    "phone": "3108876651",
-    "email": "jass@gmail.com"
-     }
-     
-]
+class TecnicoCreate(BaseModel):
+    full_name: str
+    document_type: str = "CC"
+    document_id: str
+    phone: str
+    especialidad: str
+    password: str
+
+class TecnicoResponse(BaseModel):
+    id: int
+    full_name: str
+    document_type: str
+    document_id: str
+    phone: str
+    especialidad: str
+    password: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 @router.post("/", response_model=TecnicoResponse, status_code=status.HTTP_201_CREATED)
-def create_tecnico(tecnico: TecnicoCreate):
-    new_id = len(tecnico_db) + 1 if tecnico_db else 1
-    new_tecnico = {
-        "id": new_id,
-        "full_name": tecnico.full_name,
-        "document_type": tecnico.document_type,
-        "document_id": tecnico.document_id,
-        "phone": tecnico.phone,
-        "especiality": tecnico.especiality,
-        "email": tecnico.email
-        
-    }
-    tecnico_db.append(new_tecnico)   
+def create_tecnico(tecnico: TecnicoCreate, db: Session = Depends(get_db)):
+    existing = db.query(models.TecnicoModel).filter(models.TecnicoModel.document_id == tecnico.document_id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe un técnico registrado con esta cédula.")
 
-    return new_tecnico
+    db_tecnico = models.TecnicoModel(
+        nombre=tecnico.full_name,
+        document_type=tecnico.document_type,
+        document_id=tecnico.document_id,
+        telefono=tecnico.phone,
+        especialidad=tecnico.especialidad,
+        password=tecnico.password
+    )
+    
+    db.add(db_tecnico)
+    db.commit()
+    db.refresh(db_tecnico)
+    
+    return TecnicoResponse(
+        id=db_tecnico.id,
+        full_name=db_tecnico.nombre,
+        document_type=db_tecnico.document_type,
+        document_id=db_tecnico.document_id,
+        phone=db_tecnico.telefono,
+        especialidad=db_tecnico.especialidad,
+        password=db_tecnico.password
+    )
 
 @router.get("/", response_model=List[TecnicoResponse])
-def list_tecnicos():
-        return tecnico_db
-    
-@router.get("/{tecnico_id}", response_model=TecnicoResponse)
-def get_tecnico(tecnico_id: int):
-        for tecnico in tecnico_db:
-            if tecnico["id"] == tecnico_id:
-                return tecnico
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No se encontro el tecnico"
+def list_tecnicos(db: Session = Depends(get_db)):
+    tecnicos = db.query(models.TecnicoModel).all()
+    resultado = []
+    for t in tecnicos:
+        resultado.append(
+            TecnicoResponse(
+                id=t.id,
+                full_name=t.nombre,
+                document_type=t.document_type,
+                document_id=t.document_id,
+                phone=t.telefono,
+                especialidad=t.especialidad,
+                password=t.password
+            )
         )
-
-@router.put("/{tecnico_id}", response_model=TecnicoResponse)
-def datos_tecnico(tecnico_id: int, update_tecnico: TecnicoCreate):
-        for tecnico in tecnico_db:
-            if tecnico["id"] == tecnico_id:
-                tecnico["full_name"] = update_tecnico.full_name
-                tecnico["document_type"] = update_tecnico.document_type
-                tecnico["document_id"] = update_tecnico.document_id
-                tecnico["phone"] = update_tecnico.phone
-                tecnico["especiality"] = update_tecnico.especiality
-                tecnico["email"] = update_tecnico.email
-                return tecnico
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No se encontro el tecnico"
-        )
-
-@router.delete("/{tecnico_id}")
-def delete_tecnico(tecnico_id: int):
-    for index, tecnico in enumerate(tecnico_db):
-        if tecnico["id"] == tecnico_id:
-            tecnico_db.remove(tecnico)
-            return {"message": "Tecnico eliminado"}
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="No se encontro el tecnico"
-    )   
+    return resultado

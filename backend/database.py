@@ -2,16 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./mka.db"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Pepo12345678910@localhost:3306/mka_db"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
-# Dependencia para obtener la sesión de base de datos en cada petición
 def get_db():
     db = SessionLocal()
     try:
