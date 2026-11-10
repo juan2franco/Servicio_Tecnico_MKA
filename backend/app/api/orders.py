@@ -20,13 +20,13 @@ class OrderUpdateStatus(BaseModel):
 class OrderResponse(BaseModel):
     id: int
     cliente_id: int
-    tecnico_id: Optional[int]
+    tecnico_id: Optional[int] = None
     equipo: str
     descripcion: str
-    presupuesto: float
+    presupuesto: Optional[float] = 0.0
     estado: str
-    aprobado_cliente: int
-    avance_realtime: Optional[str]
+    aprobado_cliente: Optional[int] = 0
+    avance_realtime: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -35,7 +35,7 @@ class OrderResponse(BaseModel):
 def create_order(order: OrderCreate, db: Session = Depends(get_db)):
     db_order = models.OrdenModel(
         cliente_id=order.cliente_id,
-        tecnico_id=None,
+        tecnico_id=None,  # Ahora MySQL aceptará este valor nulo sin arrojar error 500
         equipo=order.equipo,
         descripcion=order.descripcion,
         presupuesto=0.0,
@@ -52,7 +52,6 @@ def create_order(order: OrderCreate, db: Session = Depends(get_db)):
 def list_orders(db: Session = Depends(get_db)):
     return db.query(models.OrdenModel).all()
 
-# TOMAR ORDEN (Límite máximo 4)
 @router.put("/tomar/{order_id}/{tecnico_id}", response_model=OrderResponse)
 def tomar_orden(order_id: int, tecnico_id: int, db: Session = Depends(get_db)):
     ordenes_activas = db.query(models.OrdenModel).filter(
@@ -61,7 +60,7 @@ def tomar_orden(order_id: int, tecnico_id: int, db: Session = Depends(get_db)):
     ).count()
 
     if ordenes_activas >= 4:
-        raise HTTPException(status_code=400, detail="¡Límite alcanzado! No puedes tener más de 4 órdenes activas.")
+        raise HTTPException(status_code=400, detail="¡Límite alcanzado! No puedes tener más de 4 órdenes activas simultáneamente.")
 
     order = db.query(models.OrdenModel).filter(models.OrdenModel.id == order_id).first()
     if not order:
@@ -76,7 +75,6 @@ def tomar_orden(order_id: int, tecnico_id: int, db: Session = Depends(get_db)):
     db.refresh(order)
     return order
 
-# ACTUALIZAR AVANCE EN TIEMPO REAL
 @router.put("/actualizar-avance/{order_id}", response_model=OrderResponse)
 def actualizar_avance(order_id: int, payload: OrderUpdateStatus, db: Session = Depends(get_db)):
     order = db.query(models.OrdenModel).filter(models.OrdenModel.id == order_id).first()
