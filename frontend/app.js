@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.switchTabCliente = function(tabName) {
         document.querySelectorAll('[id^="subview-cli-"]').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('[id^="tab-cli-"]').forEach(el => {
-            el.className = "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
+            el.className = "px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
         });
 
         const targetSub = document.getElementById(`subview-cli-${tabName}`);
@@ -29,16 +29,17 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const activeTab = document.getElementById(`tab-cli-${tabName}`);
         if (activeTab) {
-            activeTab.className = "px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 transition-all";
+            activeTab.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-md transition-all";
         }
 
         if (tabName === 'dispositivos') obtenerDispositivosCliente();
+        if (tabName === 'ordenes') fetchOrdenes();
     };
 
     window.switchTabTecnico = function(tabName) {
         document.querySelectorAll('[id^="subview-tec-"]').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('[id^="tab-tec-"]').forEach(el => {
-            el.className = "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all";
+            el.className = "px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all";
         });
 
         const targetSub = document.getElementById(`subview-tec-${tabName}`);
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const activeTab = document.getElementById(`tab-tec-${tabName}`);
         if (activeTab) {
-            activeTab.className = "px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 transition-all";
+            activeTab.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-md transition-all";
         }
 
         if (tabName === 'disponibles' || tabName === 'tomadas') obtenerOrdenesTecnico();
@@ -90,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // REGISTRO TÉCNICO (Sincronizado con campos 'nombre' y 'telefono')
+    // REGISTRO TÉCNICO
     const tecnicoForm = document.getElementById("tecnico-form");
     if (tecnicoForm) {
         tecnicoForm.addEventListener("submit", async (e) => {
@@ -128,7 +129,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ordenForm) {
         ordenForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const cli = JSON.parse(localStorage.getItem("clienteActivo") || '{"id": 1}');
+            const cliStr = localStorage.getItem("clienteActivo");
+            if (!cliStr) {
+                alert("Debes iniciar sesión para crear una orden.");
+                return navTo("auth-cliente-login");
+            }
+            const cli = JSON.parse(cliStr);
             const data = {
                 cliente_id: cli.id,
                 equipo: document.getElementById("ord-equipo")?.value || "",
@@ -141,7 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
-                if (!response.ok) throw new Error("Error al crear orden");
+                
+                if (!response.ok) {
+                    const errorDetail = await response.json();
+                    let msg = "Error al crear orden";
+                    if (typeof errorDetail.detail === "string") msg = errorDetail.detail;
+                    else if (Array.isArray(errorDetail.detail)) msg = errorDetail.detail.map(d => d.msg).join(", ");
+                    throw new Error(msg);
+                }
+
                 alert("¡Orden enviada al panel técnico con éxito!");
                 ordenForm.reset();
                 fetchOrdenes();
@@ -156,7 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (dispForm) {
         dispForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const cli = JSON.parse(localStorage.getItem("clienteActivo") || '{"id": 1}');
+            const cliStr = localStorage.getItem("clienteActivo");
+            if (!cliStr) return alert("Debes iniciar sesión.");
+            const cli = JSON.parse(cliStr);
+            
             const data = {
                 cliente_id: cli.id,
                 nombre_equipo: document.getElementById("disp-nombre")?.value || "",
@@ -170,7 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
-                if (!response.ok) throw new Error("Error al registrar dispositivo");
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Error al registrar dispositivo");
+                }
                 alert("¡Dispositivo registrado exitosamente!");
                 dispForm.reset();
                 obtenerDispositivosCliente();
@@ -181,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// LOGIN CLIENTE (Blindado)
+// LOGIN CLIENTE
 window.simularLoginCliente = async function(event) {
     if (event) event.preventDefault();
     const doc = document.getElementById("cli-login-doc")?.value.trim();
@@ -192,7 +212,7 @@ window.simularLoginCliente = async function(event) {
         const clientes = await res.json();
 
         if (!Array.isArray(clientes)) {
-            throw new Error(clientes.detail || "Error al obtener los clientes del servidor.");
+            throw new Error(clientes.detail || "Error al consultar clientes en la API.");
         }
 
         const cli = clientes.find(c => String(c.document_id) === doc && String(c.password) === pass);
@@ -213,7 +233,7 @@ window.simularLoginCliente = async function(event) {
     }
 };
 
-// LOGIN TÉCNICO (Blindado)
+// LOGIN TÉCNICO
 window.simularLoginTecnico = async function(event) {
     if (event) event.preventDefault();
     const doc = document.getElementById("tecnico-login-input")?.value.trim();
@@ -224,7 +244,7 @@ window.simularLoginTecnico = async function(event) {
         const tecnicos = await res.json();
 
         if (!Array.isArray(tecnicos)) {
-            throw new Error(tecnicos.detail || "Error al obtener los técnicos del servidor.");
+            throw new Error(tecnicos.detail || "Error al consultar técnicos en la API.");
         }
 
         const tec = tecnicos.find(t => String(t.document_id) === doc && String(t.password) === pass);
@@ -265,10 +285,10 @@ function cargarDatosTecnicoSesion() {
     if (!tec || !container) return;
     container.innerHTML = `
         <h3 class="font-bold text-slate-100 border-b border-slate-800 pb-3">Información del Técnico</h3>
-        <p class="text-sm text-slate-300"><strong>Nombre:</strong> ${tec.nombre}</p>
-        <p class="text-sm text-slate-300"><strong>Cédula:</strong> ${tec.document_id}</p>
-        <p class="text-sm text-slate-300"><strong>Teléfono:</strong> ${tec.telefono || "-"}</p>
-        <p class="text-sm text-slate-300"><strong>Especialidad:</strong> ${tec.especialidad || "-"}</p>
+        <p class="text-xs text-slate-300"><strong class="text-slate-400">Nombre:</strong> ${tec.nombre}</p>
+        <p class="text-xs text-slate-300"><strong class="text-slate-400">Cédula:</strong> ${tec.document_id}</p>
+        <p class="text-xs text-slate-300"><strong class="text-slate-400">Teléfono:</strong> ${tec.telefono || "-"}</p>
+        <p class="text-xs text-slate-300"><strong class="text-slate-400">Especialidad:</strong> ${tec.especialidad || "-"}</p>
     `;
 }
 
@@ -276,13 +296,15 @@ function cargarDatosTecnicoSesion() {
 async function obtenerDispositivosCliente() {
     const list = document.getElementById("dispositivos-list");
     if (!list) return;
-    const cli = JSON.parse(localStorage.getItem("clienteActivo") || '{"id": 1}');
+    const cliStr = localStorage.getItem("clienteActivo");
+    if (!cliStr) return;
+    const cli = JSON.parse(cliStr);
 
     try {
         const res = await fetch(`${API_URL}/clients/dispositivos/${cli.id}`);
         const dispositivos = await res.json();
         list.innerHTML = "";
-        if (!dispositivos.length) {
+        if (!Array.isArray(dispositivos) || !dispositivos.length) {
             list.innerHTML = `<p class="text-xs text-slate-500 col-span-2">No has registrado ningún dispositivo aún.</p>`;
             return;
         }
@@ -300,15 +322,19 @@ async function obtenerDispositivosCliente() {
     }
 }
 
-// ÓRDENES DEL CLIENTE (CON AVANCE EN TIEMPO REAL)
+// ÓRDENES DEL CLIENTE (SIN EMOJI DE LUPA)
 async function fetchOrdenes() {
     const list = document.getElementById("ordenes-list");
     if (!list) return;
-    const cli = JSON.parse(localStorage.getItem("clienteActivo") || '{"id": 1}');
+    const cliStr = localStorage.getItem("clienteActivo");
+    if (!cliStr) return;
+    const cli = JSON.parse(cliStr);
 
     try {
         const res = await fetch(`${API_URL}/orders/`);
         const ordenes = await res.json();
+        if (!Array.isArray(ordenes)) return;
+
         const misOrdenes = ordenes.filter(o => o.cliente_id === cli.id);
 
         list.innerHTML = "";
@@ -319,15 +345,15 @@ async function fetchOrdenes() {
 
         misOrdenes.forEach(ord => {
             list.innerHTML += `
-                <li class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-2">
+                <li class="bg-slate-950 border border-slate-800 p-5 rounded-2xl space-y-3">
                     <div class="flex justify-between items-center">
-                        <p class="text-sm font-bold text-slate-200">Equipo: ${ord.equipo}</p>
-                        <span class="px-2.5 py-1 text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 rounded-md border border-indigo-500/20">Estado: ${ord.estado}</span>
+                        <p class="text-sm font-bold text-slate-100">Equipo: ${ord.equipo}</p>
+                        <span class="px-3 py-1 text-[11px] font-bold bg-indigo-500/10 text-indigo-400 rounded-lg border border-indigo-500/20">Estado: ${ord.estado}</span>
                     </div>
-                    <p class="text-xs text-slate-400">Falla: ${ord.descripcion}</p>
-                    <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl mt-2">
-                        <p class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider mb-1">🔍 Seguimiento del Técnico en Tiempo Real:</p>
-                        <p class="text-xs text-slate-300 italic">${ord.avance_realtime || 'A la espera de asignación.'}</p>
+                    <p class="text-xs text-slate-400">Falla reportada: ${ord.descripcion}</p>
+                    <div class="bg-slate-900 border border-slate-800/80 p-3.5 rounded-xl mt-2">
+                        <p class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">SEGUIMIENTO TÉCNICO EN TIEMPO REAL:</p>
+                        <p class="text-xs text-slate-300 italic font-mono">${ord.avance_realtime || 'Orden registrada, pendiente de asignación técnica.'}</p>
                     </div>
                 </li>
             `;
@@ -337,7 +363,7 @@ async function fetchOrdenes() {
     }
 }
 
-// GESTIÓN DE ÓRDENES TÉCNICO (DISPONIBLES Y TOMADAS - MÁXIMO 4)
+// GESTIÓN DE ÓRDENES TÉCNICO
 async function obtenerOrdenesTecnico() {
     const dispList = document.getElementById("tecnico-ordenes-disponibles");
     const tomadasList = document.getElementById("tecnico-ordenes-tomadas");
@@ -350,6 +376,7 @@ async function obtenerOrdenesTecnico() {
     try {
         const res = await fetch(`${API_URL}/orders/`);
         const ordenes = await res.json();
+        if (!Array.isArray(ordenes)) return;
 
         const disponibles = ordenes.filter(o => o.tecnico_id === null && o.estado !== "Finalizado");
         const tomadasPorMi = ordenes.filter(o => o.tecnico_id === tec.id && o.estado !== "Finalizado");
@@ -367,7 +394,7 @@ async function obtenerOrdenesTecnico() {
                             <p class="text-sm font-bold text-slate-200">Equipo: ${ord.equipo}</p>
                             <p class="text-xs text-slate-400">Problema: ${ord.descripcion}</p>
                         </div>
-                        <button onclick="tomarOrden(${ord.id})" class="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white text-xs font-semibold rounded-xl border border-emerald-500/30 transition-all">Tomar Órden</button>
+                        <button onclick="tomarOrden(${ord.id})" class="px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white text-xs font-bold rounded-xl border border-emerald-500/30 transition-all">Tomar Orden</button>
                     </li>
                 `;
             });
@@ -379,20 +406,20 @@ async function obtenerOrdenesTecnico() {
         } else {
             tomadasPorMi.forEach(ord => {
                 tomadasList.innerHTML += `
-                    <li class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-3">
+                    <li class="bg-slate-950 border border-slate-800 p-5 rounded-2xl space-y-3">
                         <div class="flex justify-between items-center">
                             <p class="text-sm font-bold text-slate-200">Equipo: ${ord.equipo}</p>
-                            <span class="text-xs font-mono text-emerald-400">#${ord.id} - ${ord.estado}</span>
+                            <span class="text-xs font-mono text-emerald-400 font-bold">#${ord.id} - ${ord.estado}</span>
                         </div>
                         <p class="text-xs text-slate-400">Falla: ${ord.descripcion}</p>
                         
                         <div class="space-y-2 pt-2 border-t border-slate-800">
-                            <label class="block text-[11px] text-slate-400 uppercase font-semibold">Actualizar Avance en Tiempo Real:</label>
-                            <input type="text" id="avance-input-${ord.id}" value="${ord.avance_realtime || ''}" placeholder="Ej. Cambio de pantalla completado, testeando..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200">
+                            <label class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Actualizar Avance en Tiempo Real:</label>
+                            <input type="text" id="avance-input-${ord.id}" value="${ord.avance_realtime || ''}" placeholder="Ej. Pruebas de encendido superadas, procediendo a ensamble..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200">
                             
                             <div class="flex gap-2 justify-end pt-1">
-                                <button onclick="guardarAvance(${ord.id}, 'En Reparación')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs rounded-lg">Guardar Avance</button>
-                                <button onclick="guardarAvance(${ord.id}, 'Finalizado')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg">Finalizar Trabajo</button>
+                                <button onclick="guardarAvance(${ord.id}, 'En Reparación')" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg">Guardar Avance</button>
+                                <button onclick="guardarAvance(${ord.id}, 'Finalizado')" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">Finalizar Trabajo</button>
                             </div>
                         </div>
                     </li>
@@ -404,7 +431,7 @@ async function obtenerOrdenesTecnico() {
     }
 }
 
-// TOMAR ORDEN (Máximo 4)
+// TOMAR ORDEN
 async function tomarOrden(ordenId) {
     const tec = JSON.parse(localStorage.getItem("tecnicoActivo") || "null");
     if (!tec) return alert("Debes iniciar sesión como técnico.");
@@ -415,7 +442,7 @@ async function tomarOrden(ordenId) {
             const err = await res.json();
             throw new Error(err.detail || "No se pudo tomar la orden");
         }
-        alert("¡Órden asignada con éxito!");
+        alert("¡Orden asignada con éxito!");
         obtenerOrdenesTecnico();
     } catch (err) {
         alert(err.message);
@@ -433,7 +460,10 @@ async function guardarAvance(ordenId, nuevoEstado) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ estado: nuevoEstado, avance_realtime: textoAvance })
         });
-        if (!res.ok) throw new Error("No se pudo guardar el avance");
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "No se pudo guardar el avance");
+        }
         alert("¡Avance actualizado!");
         obtenerOrdenesTecnico();
     } catch (err) {

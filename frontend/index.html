@@ -1,307 +1,547 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MKA - Servicio Técnico</title>
-  <link rel="stylesheet" href="output.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASKINSTOBA - Servicio Técnico Especializado</title>
+    <!-- Tailwind CSS desde CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#020617',
+                            card: '#0f172a',
+                            emerald: '#10b981',
+                            cyan: '#06b6d4',
+                            indigo: '#6366f1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glow-emerald { box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.25); }
+        .glow-cyan { box-shadow: 0 0 50px -10px rgba(6, 182, 212, 0.25); }
+        .glow-indigo { box-shadow: 0 0 50px -10px rgba(99, 102, 241, 0.25); }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased selection:bg-indigo-500 selection:text-white">
+<body class="h-full font-sans antialiased bg-slate-950 flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
 
-  <!-- HEADER GLOBAL -->
-  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-lg">
-    <div class="flex items-center gap-3 cursor-pointer group" onclick="navTo('landing')">
-      <div class="bg-gradient-to-tr from-indigo-600 to-blue-500 text-white p-2.5 rounded-xl font-black text-xl tracking-wider shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">MKA</div>
-      <div>
-        <h1 class="text-lg font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">Servicio Técnico</h1>
-        <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Plataforma de Gestión</p>
-      </div>
-    </div>
-    <div class="flex items-center gap-3">
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        Modo Prototipo
-      </span>
-      <button onclick="navTo('landing')" id="btn-logout" class="hidden text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-lg border border-slate-700 transition-all hover:border-slate-600 shadow-sm">
-        Cerrar Sesión / Cambiar Rol
-      </button>
-    </div>
-  </header>
-
-  <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-1 flex items-center justify-center p-6 max-w-6xl mx-auto w-full">
-
-    <!-- LANDING -->
-    <div id="view-landing" class="view-section w-full space-y-8 text-center py-8">
-      <div class="space-y-2">
-        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">Bienvenido al Centro de Soporte MKA</h2>
-        <p class="text-slate-400 text-sm max-w-md mx-auto">Selecciona tu rol en la plataforma para gestionar o registrar tus órdenes de servicio.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto pt-2">
-        <div class="group relative bg-slate-900/80 border border-slate-800 p-8 rounded-3xl hover:border-indigo-500/50 transition-all duration-300 hover:shadow-2xl flex flex-col items-center">
-          <h3 class="text-xl font-bold mb-2 text-slate-100">Portal de Clientes</h3>
-          <p class="text-slate-400 text-xs mb-8 leading-relaxed">Registra tus datos, crea órdenes y gestiona tus equipos.</p>
-          <div class="flex flex-col sm:flex-row gap-3 w-full mt-auto">
-            <button onclick="navTo('auth-cliente-login')" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-xs font-semibold">Iniciar Sesión</button>
-            <button onclick="navTo('auth-cliente-register')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl text-xs font-semibold border border-slate-700">Registrarse</button>
-          </div>
-        </div>
-
-        <div class="group relative bg-slate-900/80 border border-slate-800 p-8 rounded-3xl hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl flex flex-col items-center">
-          <h3 class="text-xl font-bold mb-2 text-slate-100">Portal de Técnicos</h3>
-          <p class="text-slate-400 text-xs mb-8 leading-relaxed">Toma órdenes disponibles, administra reparaciones y actualiza progresos.</p>
-          <div class="flex flex-col sm:flex-row gap-3 w-full mt-auto">
-            <button onclick="navTo('auth-tecnico-login')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-xs font-semibold">Iniciar Sesión</button>
-            <button onclick="navTo('auth-tecnico-register')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl text-xs font-semibold border border-slate-700">Registrarse</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LOGIN CLIENTE -->
-    <div id="view-auth-cliente-login" class="view-section hidden max-w-md w-full mx-auto py-8">
-      <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
-        <h3 class="text-xl font-bold text-center text-slate-100">Iniciar Sesión - Cliente</h3>
-        <form onsubmit="simularLoginCliente(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">N° Documento (Cédula)</label>
-            <input type="text" id="cli-login-doc" required placeholder="Ej. 1088123456" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Contraseña</label>
-            <input type="password" id="cli-login-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold">Ingresar al Panel</button>
-        </form>
-        <button onclick="navTo('landing')" class="w-full text-xs text-slate-400 hover:text-slate-200 text-center block">← Volver al inicio</button>
-      </div>
-    </div>
-
-    <!-- REGISTRO CLIENTE -->
-    <div id="view-auth-cliente-register" class="view-section hidden max-w-2xl w-full mx-auto py-8">
-      <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
-        <h3 class="text-xl font-bold text-slate-100 border-b border-slate-800 pb-4">Registro de Cliente</h3>
-        <form id="client-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Nombre Completo *</label>
-            <input type="text" id="full_name" required placeholder="Ej. Juan Pérez" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tipo Documento *</label>
-            <select id="document_type" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-              <option value="CC">Cédula de Ciudadanía (CC)</option>
-              <option value="CE">Cédula de Extranjería (CE)</option>
-              <option value="PP">Pasaporte</option>
-              <option value="NIT">NIT</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">N° Documento *</label>
-            <input type="text" id="document_id" required placeholder="Ej. 1088123456" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Correo Electrónico</label>
-            <input type="email" id="email" placeholder="correo@ejemplo.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Teléfono / WhatsApp *</label>
-            <input type="text" id="phone" required placeholder="Ej. 3001234567" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Dirección *</label>
-            <input type="text" id="direccion" required placeholder="Ej. Calle 15 # 5-12" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Contraseña *</label>
-            <input type="password" id="cli-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div class="md:col-span-2 flex justify-between items-center pt-4 border-t border-slate-800 mt-2">
-            <button type="button" onclick="navTo('landing')" class="text-xs text-slate-400 hover:text-slate-200">← Volver</button>
-            <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl">Guardar y Continuar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- LOGIN TÉCNICO -->
-    <div id="view-auth-tecnico-login" class="view-section hidden max-w-md w-full mx-auto py-8">
-      <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
-        <h3 class="text-xl font-bold text-center text-slate-100">Iniciar Sesión - Técnico</h3>
-        <form onsubmit="simularLoginTecnico(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Cédula (CC)</label>
-            <input type="text" id="tecnico-login-input" required placeholder="Ej. 1313" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase">Contraseña</label>
-            <input type="password" id="tecnico-login-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-semibold">Ingresar al Panel Técnico</button>
-        </form>
-        <button onclick="navTo('landing')" class="w-full text-xs text-slate-400 hover:text-slate-200 text-center block">← Volver al inicio</button>
-      </div>
-    </div>
-
-    <!-- REGISTRO TÉCNICO -->
-    <div id="view-auth-tecnico-register" class="view-section hidden max-w-md w-full mx-auto py-8">
-      <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-xl space-y-6">
-        <h3 class="text-xl font-bold text-slate-100 border-b border-slate-800 pb-4">Registro de Técnico</h3>
-        <form id="tecnico-form" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Nombre Completo *</label>
-            <input type="text" id="tec-nombre" required placeholder="Ej. Luis José" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Cédula (CC) *</label>
-            <input type="text" id="tec-document-id" required placeholder="Ej. 1313" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Especialidad</label>
-            <input type="text" id="tec-especialidad" placeholder="Ej. Desarrollador / Hardware" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Teléfono</label>
-            <input type="text" id="tec-telefono" placeholder="Ej. 4444444" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1.5">Contraseña *</label>
-            <input type="password" id="tec-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-          </div>
-          <div class="flex justify-between items-center pt-4 border-t border-slate-800 mt-2">
-            <button type="button" onclick="navTo('landing')" class="text-xs text-slate-400 hover:text-slate-200">← Volver</button>
-            <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl">Guardar Técnico</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- DASHBOARD CLIENTE -->
-    <div id="view-dashboard-cliente" class="view-section hidden w-full space-y-6">
-      <div class="flex border-b border-slate-800 pb-4 justify-between items-center">
-        <h2 class="text-2xl font-bold text-slate-100">Mi Panel de Cliente</h2>
-        <div class="flex gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
-          <button onclick="switchTabCliente('ordenes')" id="tab-cli-ordenes" class="px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">Órdenes</button>
-          <button onclick="switchTabCliente('dispositivos')" id="tab-cli-dispositivos" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">Mis Dispositivos</button>
-          <button onclick="switchTabCliente('datos')" id="tab-cli-datos" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">Mis Datos</button>
-        </div>
-      </div>
-
-      <!-- Tab Órdenes Cliente -->
-      <div id="subview-cli-ordenes" class="space-y-6">
-        <section class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl">
-          <h3 class="font-bold text-slate-100 text-base border-b border-slate-800 pb-3 mb-4">Crear Nueva Órden de Servicio</h3>
-          <form id="orden-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="md:col-span-2">
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Equipo / Dispositivo *</label>
-              <input type="text" id="ord-equipo" required placeholder="Ej. Lenovo h2zr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
+    <!-- BARRA NAVEGACIÓN PRINCIPAL -->
+    <header class="bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+            
+            <!-- Logotipo e Identidad -->
+            <div class="flex items-center gap-4 cursor-pointer group" onclick="navTo('landing')">
+                <div class="relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-300"></div>
+                    <img src="image/unnamed.png" alt="MASKINSTOBA Logo" class="relative h-14 w-14 object-contain">
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-wider text-white bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">MASKINSTOBA</h1>
+                    <p class="text-[11px] text-cyan-400 uppercase tracking-widest font-bold">Ingeniería & Soporte Técnico</p>
+                </div>
             </div>
-            <div class="md:col-span-2">
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Descripción del Problema *</label>
-              <textarea id="ord-descripcion" rows="2" required placeholder="Ej. Dañado..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm"></textarea>
+
+            <!-- Acciones de Navegación -->
+            <nav class="flex items-center gap-4">
+                <button onclick="navTo('auth-cliente-login')" class="px-5 py-2.5 text-xs font-bold text-slate-300 hover:text-white transition-all">
+                    Portal Cliente
+                </button>
+                <button onclick="navTo('auth-tecnico-login')" class="px-5 py-2.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-xl border border-slate-700/80 shadow-lg transition-all">
+                    Acceso Técnico
+                </button>
+                <button id="btn-logout" onclick="navTo('landing')" class="hidden px-5 py-2.5 text-xs font-bold bg-rose-950/40 hover:bg-rose-600 text-rose-300 hover:text-white rounded-xl border border-rose-800/50 transition-all">
+                    Cerrar Sesión
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL DE VISTAS -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
+
+        <!-- 1. LANDING PAGE / INICIO AMPLIADA -->
+        <section id="view-landing" class="view-section space-y-24 py-8">
+            
+            <!-- Hero Principal de Gran Impacto -->
+            <div class="relative text-center space-y-8 max-w-4xl mx-auto pt-6">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-tr from-cyan-500/10 to-emerald-500/10 blur-3xl rounded-full -z-10"></div>
+
+                <div class="inline-flex items-center gap-2 bg-slate-900/90 border border-emerald-500/30 px-5 py-2 rounded-full text-xs font-bold text-emerald-400 tracking-wider uppercase shadow-inner">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Laboratorio de Alta Microelectrónica & Diagnóstico
+                </div>
+
+                <h2 class="text-5xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-none">
+                    Reparación Avanzada <br>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500">
+                        & Infraestructura IT
+                    </span>
+                </h2>
+
+                <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    Soporte técnico especializado de nivel industrial. Diagnósticos lógicos por computador, calibración de componentes y monitoreo de servicio en tiempo real.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-5 pt-4">
+                    <button onclick="navTo('auth-cliente-register')" class="px-8 py-4 text-xs font-extrabold uppercase tracking-wider bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white rounded-2xl shadow-xl shadow-cyan-900/40 border border-cyan-400/30 transition-all transform hover:-translate-y-0.5">
+                        Crear Cuenta de Cliente
+                    </button>
+                    <button onclick="navTo('auth-tecnico-register')" class="px-8 py-4 text-xs font-extrabold uppercase tracking-wider bg-slate-900 hover:bg-slate-800 text-slate-200 rounded-2xl border border-slate-700/80 shadow-xl transition-all transform hover:-translate-y-0.5">
+                        Registro para Técnicos
+                    </button>
+                </div>
             </div>
-            <div class="md:col-span-2 flex justify-end">
-              <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl shadow-lg">Crear Órden</button>
+
+            <!-- BLOQUE DE VALORES CON BRILLO Y EFECTOS EN 3 COLUMNAS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div class="bg-slate-900/90 border border-cyan-500/30 p-8 rounded-3xl text-center space-y-2 glow-cyan transform hover:-translate-y-1 transition-all">
+                    <p class="text-3xl font-black text-cyan-400">24/7</p>
+                    <p class="text-xs text-slate-300 uppercase tracking-widest font-extrabold">Monitoreo Activo</p>
+                    <p class="text-[11px] text-slate-400">Seguimiento constante de estado en tiempo real para cada dispositivo.</p>
+                </div>
+                <div class="bg-slate-900/90 border border-indigo-500/30 p-8 rounded-3xl text-center space-y-2 glow-indigo transform hover:-translate-y-1 transition-all">
+                    <p class="text-3xl font-black text-indigo-400">12 Meses</p>
+                    <p class="text-xs text-slate-300 uppercase tracking-widest font-extrabold">Garantía Certificada</p>
+                    <p class="text-[11px] text-slate-400">Respaldo total en todas las intervenciones de hardware y componentes.</p>
+                </div>
+                <div class="bg-slate-900/90 border border-emerald-500/30 p-8 rounded-3xl text-center space-y-2 glow-emerald transform hover:-translate-y-1 transition-all">
+                    <p class="text-3xl font-black text-emerald-400">Originales</p>
+                    <p class="text-xs text-slate-300 uppercase tracking-widest font-extrabold">Repuestos de Fábrica</p>
+                    <p class="text-[11px] text-slate-400">Componentes de alta gama para asegurar máxima vida útil.</p>
+                </div>
             </div>
-          </form>
+
+            <!-- TARJETAS DE CAPACIDADES DE SERVICIOS ENRIQUECIDAS -->
+            <div class="space-y-8">
+                <div class="text-center space-y-2">
+                    <h3 class="text-2xl font-black text-white">Nuestras Capacidades de Servicio y Especificaciones</h3>
+                    <p class="text-xs text-slate-400">Estándares técnicos y parámetros de ejecución integrales para equipos de gama alta y corporativa.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Servicio 1 -->
+                    <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 hover:border-emerald-500/40 glow-emerald transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-lg">
+                                01
+                            </div>
+                            <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Precisión 99.8%</span>
+                        </div>
+                        <h4 class="text-white font-bold text-lg">Diagnóstico Electrónico</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">Pruebas eléctricas y de componentes lógicos para localizar fallas exactas en tarjetas madre, circuitos integrados y fuentes de poder con multímetros digitales de grado de laboratorio.</p>
+                        <ul class="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Tiempo estimado: 2 a 4 horas</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Resistor y microchip testing</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Informe técnico detallado</li>
+                        </ul>
+                    </div>
+
+                    <!-- Servicio 2 -->
+                    <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 hover:border-cyan-500/40 glow-cyan transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-black text-lg">
+                                02
+                            </div>
+                            <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">Acceso 24/7</span>
+                        </div>
+                        <h4 class="text-white font-bold text-lg">Trazabilidad en Tiempo Real</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">Consulte el estado operativo exacto de su equipo con bitácora detallada ingresada por nuestros ingenieros a cargo desde la recepción hasta las pruebas finales.</p>
+                        <ul class="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Actualización de estados instantánea</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Panel web personalizado por cliente</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Historial completo de intervenciones</li>
+                        </ul>
+                    </div>
+
+                    <!-- Servicio 3 -->
+                    <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 hover:border-indigo-500/40 glow-indigo transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-black text-lg">
+                                03
+                            </div>
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">Garantía 12 Meses</span>
+                        </div>
+                        <h4 class="text-white font-bold text-lg">Mantenimiento Térmico</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">Limpieza profunda ultrasónica, cambio de interfaz de disipación de alta conductividad térmica y calibración de ventilación para workstations y laptops de alto rendimiento.</p>
+                        <ul class="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> Pasta térmica conductiva de plata</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> Reducción de hasta 15°C en CPU/GPU</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> Limpieza ultrasónica de disipadores</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARACTERÍSTICAS Y PROTOCOLO DE TRABAJO -->
+            <div class="bg-slate-900/80 border border-slate-800 p-10 rounded-3xl space-y-8">
+                <div class="text-center space-y-2">
+                    <h3 class="text-2xl font-black text-white">Protocolo de Atención MASKINSTOBA</h3>
+                    <p class="text-xs text-slate-400">Proceso estandarizado para garantizar la transparencia y excelencia en cada intervención.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-cyan-400 uppercase tracking-widest">Paso 1</span>
+                        <h5 class="text-white font-bold text-sm">Recepción & Registro</h5>
+                        <p class="text-xs text-slate-400">Alta de la orden de servicio en el sistema y emisión de ticket de seguimiento para el cliente.</p>
+                    </div>
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Paso 2</span>
+                        <h5 class="text-white font-bold text-sm">Inspección Técnica</h5>
+                        <p class="text-xs text-slate-400">Evaluación minuciosa en banco de pruebas por ingenieros certificados de hardware.</p>
+                    </div>
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Paso 3</span>
+                        <h5 class="text-white font-bold text-sm">Reparación & Calibración</h5>
+                        <p class="text-xs text-slate-400">Sustitución de piezas afectadas por insumos originales y pruebas de esfuerzo térmico.</p>
+                    </div>
+                    <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">Paso 4</span>
+                        <h5 class="text-white font-bold text-sm">Control de Calidad</h5>
+                        <p class="text-xs text-slate-400">Verificación final de parámetros operativos y entrega formal con garantía por escrito.</p>
+                    </div>
+                </div>
+            </div>
+
         </section>
 
-        <section class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
-          <h3 class="font-bold text-slate-100 mb-4">Mis Órdenes Registradas y Estado en Tiempo Real</h3>
-          <ul id="ordenes-list" class="space-y-4"></ul>
-        </section>
-      </div>
+        <!-- 2. LOGIN CLIENTE -->
+        <section id="view-auth-cliente-login" class="view-section hidden max-w-md mx-auto py-10">
+            <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl glow-indigo space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-black text-white">Ingreso de Clientes</h2>
+                    <p class="text-xs text-slate-400">Consulte el estado de sus equipos y cree nuevas órdenes de servicio.</p>
+                </div>
+                
+                <form onsubmit="simularLoginCliente(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Número de Documento</label>
+                        <input type="text" id="cli-login-doc" required placeholder="Ingrese su cédula o NIT" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Contraseña</label>
+                        <input type="password" id="cli-login-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all">
+                        Iniciar Sesión
+                    </button>
+                </form>
 
-      <!-- Tab Dispositivos Cliente -->
-      <div id="subview-cli-dispositivos" class="hidden space-y-6">
-        <section class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl">
-          <h3 class="font-bold text-slate-100 mb-4 border-b border-slate-800 pb-3">Registrar Nuevo Dispositivo</h3>
-          <form id="dispositivo-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Nombre / Modelo *</label>
-              <input type="text" id="disp-nombre" required placeholder="Ej. MacBook Pro" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
+                <p class="text-center text-xs text-slate-500">
+                    ¿No tiene una cuenta? 
+                    <button onclick="navTo('auth-cliente-register')" class="text-cyan-400 hover:underline font-bold">Registrarse aquí</button>
+                </p>
             </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">Marca *</label>
-              <input type="text" id="disp-marca" required placeholder="Ej. Apple" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-400 mb-1.5">N° Serial o Modelo</label>
-              <input type="text" id="disp-serial" placeholder="Ej. SN-998123" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 text-sm">
-            </div>
-            <div class="md:col-span-3 flex justify-end">
-              <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl">Guardar Dispositivo</button>
-            </div>
-          </form>
         </section>
 
-        <section class="bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl">
-          <h3 class="font-bold text-slate-100 mb-4">Mis Dispositivos Registrados</h3>
-          <ul id="dispositivos-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></ul>
-        </section>
-      </div>
+        <!-- 3. REGISTRO CLIENTE -->
+        <section id="view-auth-cliente-register" class="view-section hidden max-w-lg mx-auto py-6">
+            <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl glow-indigo space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-black text-white">Registro de Cliente</h2>
+                    <p class="text-xs text-slate-400">Complete el formulario para habilitar su plataforma de soporte.</p>
+                </div>
 
-      <!-- Tab Mis Datos Cliente -->
-      <div id="subview-cli-datos" class="hidden space-y-4">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-4">
-          <h3 class="font-bold text-slate-100 border-b border-slate-800 pb-3">Información Personal del Cliente</h3>
-          <p class="text-sm text-slate-300"><strong>Nombre:</strong> <span id="perfil-nombre">-</span></p>
-          <p class="text-sm text-slate-300"><strong>Documento:</strong> <span id="perfil-doc-tipo">-</span> - <span id="perfil-doc-id">-</span></p>
-          <p class="text-sm text-slate-300"><strong>Teléfono / WhatsApp:</strong> <span id="perfil-telefono">-</span></p>
-          <p class="text-sm text-slate-300"><strong>Correo:</strong> <span id="perfil-correo">-</span></p>
-          <p class="text-sm text-slate-300"><strong>Dirección:</strong> <span id="perfil-direccion">-</span></p>
+                <form id="client-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Nombre Completo / Razón Social</label>
+                        <input type="text" id="full_name" required placeholder="Ej. Carlos Mendoza" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Tipo</label>
+                            <select id="document_type" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                                <option value="CC">CC</option>
+                                <option value="CE">CE</option>
+                                <option value="NIT">NIT</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Número de Documento</label>
+                            <input type="text" id="document_id" required placeholder="123456789" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Correo Electrónico</label>
+                            <input type="email" id="email" placeholder="correo@ejemplo.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Teléfono</label>
+                            <input type="text" id="phone" required placeholder="3001234567" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Dirección Residencial / Fiscal</label>
+                        <input type="text" id="direccion" required placeholder="Calle 10 # 20 - 30" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Asignar Contraseña</label>
+                        <input type="password" id="cli-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all">
+                        Crear Cuenta de Cliente
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-slate-500">
+                    ¿Ya tiene cuenta? 
+                    <button onclick="navTo('auth-cliente-login')" class="text-cyan-400 hover:underline font-bold">Inicie sesión aquí</button>
+                </p>
+            </div>
+        </section>
+
+        <!-- 4. LOGIN TÉCNICO -->
+        <section id="view-auth-tecnico-login" class="view-section hidden max-w-md mx-auto py-10">
+            <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl glow-emerald space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-black text-white">Panel de Especialistas</h2>
+                    <p class="text-xs text-slate-400">Acceso para la atención y seguimiento de mantenimiento técnico.</p>
+                </div>
+
+                <form onsubmit="simularLoginTecnico(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Cédula de Identidad</label>
+                        <input type="text" id="tecnico-login-input" required placeholder="Número registrado" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Contraseña</label>
+                        <input type="password" id="tecnico-login-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all">
+                        Ingresar al Panel Técnico
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-slate-500">
+                    ¿Nuevo técnico? 
+                    <button onclick="navTo('auth-tecnico-register')" class="text-emerald-400 hover:underline font-bold">Registrarse aquí</button>
+                </p>
+            </div>
+        </section>
+
+        <!-- 5. REGISTRO TÉCNICO -->
+        <section id="view-auth-tecnico-register" class="view-section hidden max-w-lg mx-auto py-6">
+            <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl glow-emerald space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="text-2xl font-black text-white">Registro de Especialista</h2>
+                    <p class="text-xs text-slate-400">Alta de ingenieros y técnicos para atención de laboratorios.</p>
+                </div>
+
+                <form id="tecnico-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Nombre Completo</label>
+                        <input type="text" id="tec-nombre" required placeholder="Ej. Ricardo Gómez" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Número de Cédula</label>
+                            <input type="text" id="tec-document-id" required placeholder="Cédula de ciudadanía" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Teléfono de Contacto</label>
+                            <input type="text" id="tec-telefono" required placeholder="3009876543" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Especialidad Principal</label>
+                        <input type="text" id="tec-especialidad" placeholder="Ej. Microelectrónica / Laptops / Servidores" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Contraseña de Acceso</label>
+                        <input type="password" id="tec-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 transition-all">
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all">
+                        Registrar Especialista
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 6. DASHBOARD CLIENTE -->
+        <section id="view-dashboard-cliente" class="view-section hidden space-y-8">
+            
+            <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h2 class="text-3xl font-black text-white">Mi Panel de Cliente</h2>
+                    <p class="text-xs text-slate-400">Gestione sus equipos y consulte los avances técnicos.</p>
+                </div>
+
+                <!-- Pestañas del Cliente -->
+                <div class="flex gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                    <button id="tab-cli-ordenes" onclick="switchTabCliente('ordenes')" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-md transition-all">
+                        Órdenes de Servicio
+                    </button>
+                    <button id="tab-cli-dispositivos" onclick="switchTabCliente('dispositivos')" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">
+                        Mis Dispositivos
+                    </button>
+                    <button id="tab-cli-datos" onclick="switchTabCliente('datos')" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">
+                        Mis Datos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Subvista 1: Órdenes de Servicio -->
+            <div id="subview-cli-ordenes" class="space-y-8">
+                
+                <!-- Formulario Crear Orden -->
+                <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                    <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest">Crear Nueva Orden de Servicio</h3>
+                    
+                    <form id="orden-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Equipo / Dispositivo *</label>
+                            <input type="text" id="ord-equipo" required placeholder="Ej. Portátil Dell XPS 15 / PC Gamer" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Descripción Detallada del Problema *</label>
+                            <textarea id="ord-descripcion" required rows="3" placeholder="Indique las fallas observadas (ej. No enciende, pantalla azul, sobrecalentamiento excesivo)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all"></textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all">
+                                Registrar Orden
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de Órdenes Registradas -->
+                <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-widest">Historial de Órdenes y Estatus en Tiempo Real</h3>
+                    <ul id="ordenes-list" class="space-y-4">
+                        <p class="text-xs text-slate-500">Cargando órdenes del sistema...</p>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Subvista 2: Dispositivos -->
+            <div id="subview-cli-dispositivos" class="hidden space-y-8">
+                
+                <!-- Registrar Dispositivo -->
+                <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                    <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest">Registrar Nuevo Equipo</h3>
+                    
+                    <form id="dispositivo-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">Nombre del Equipo</label>
+                                <input type="text" id="disp-nombre" required placeholder="Ej. Workstation Lenovo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">Marca</label>
+                                <input type="text" id="disp-marca" required placeholder="Ej. Asus / Dell / HP" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1">Serial / Modelo</label>
+                                <input type="text" id="disp-serial" placeholder="Ej. SN-998823" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-all">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg transition-all">
+                                Guardar Dispositivo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de Dispositivos -->
+                <div class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                    <h3 class="text-xs font-bold text-slate-300 uppercase tracking-widest">Mis Dispositivos Registrados</h3>
+                    <ul id="dispositivos-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p class="text-xs text-slate-500">Cargando catálogo de dispositivos...</p>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Subvista 3: Mis Datos -->
+            <div id="subview-cli-datos" class="hidden bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-6 shadow-xl">
+                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest border-b border-slate-800 pb-4">Información de Cuenta</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+                    <div><span class="text-slate-400 font-semibold block mb-1">Nombre Completo:</span> <span id="perfil-nombre" class="text-white font-bold text-sm">-</span></div>
+                    <div><span class="text-slate-400 font-semibold block mb-1">Documento:</span> <span id="perfil-doc-tipo" class="text-white font-bold"></span> <span id="perfil-doc-id" class="text-white font-bold">-</span></div>
+                    <div><span class="text-slate-400 font-semibold block mb-1">Teléfono:</span> <span id="perfil-telefono" class="text-white font-bold">-</span></div>
+                    <div><span class="text-slate-400 font-semibold block mb-1">Correo Electrónico:</span> <span id="perfil-correo" class="text-white font-bold">-</span></div>
+                    <div class="sm:col-span-2"><span class="text-slate-400 font-semibold block mb-1">Dirección Registrada:</span> <span id="perfil-direccion" class="text-white font-bold">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. DASHBOARD TÉCNICO -->
+        <section id="view-dashboard-tecnico" class="view-section hidden space-y-8">
+            
+            <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h2 class="text-3xl font-black text-white">Panel de Control Técnico</h2>
+                    <p class="text-xs text-slate-400">Capacidad en ejecución: <span id="contador-ordenes-tomadas" class="font-bold text-emerald-400 text-sm">0</span> / 4 (Límite Máximo)</p>
+                </div>
+
+                <!-- Pestañas del Técnico -->
+                <div class="flex gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                    <button id="tab-tec-disponibles" onclick="switchTabTecnico('disponibles')" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-md transition-all">
+                        Órdenes Libres
+                    </button>
+                    <button id="tab-tec-tomadas" onclick="switchTabTecnico('tomadas')" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">
+                        Trabajos Asignados
+                    </button>
+                    <button id="tab-tec-perfil" onclick="switchTabTecnico('perfil')" class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all">
+                        Mi Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Subvista 1: Disponibles -->
+            <div id="subview-tec-disponibles" class="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Bandeja de Órdenes Libres en Espera</h3>
+                <ul id="tecnico-ordenes-disponibles" class="space-y-4">
+                    <p class="text-xs text-slate-500">Cargando órdenes sin técnico asignado...</p>
+                </ul>
+            </div>
+
+            <!-- Subvista 2: Tomadas -->
+            <div id="subview-tec-tomadas" class="hidden bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Órdenes en Mantenimiento y Registro de Avances</h3>
+                <ul id="tecnico-ordenes-tomadas" class="space-y-5">
+                    <p class="text-xs text-slate-500">Cargando sus órdenes asignadas...</p>
+                </ul>
+            </div>
+
+            <!-- Subvista 3: Perfil Técnico -->
+            <div id="subview-tec-perfil" class="hidden bg-slate-900/90 border border-slate-800 p-8 rounded-3xl space-y-5 shadow-xl">
+                <div id="perfil-tecnico-container" class="space-y-3 text-xs">
+                    <p class="text-slate-500">Cargando perfil del especialista...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA CORPORATIVO -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center text-xs text-slate-500 space-y-2">
+            <p class="font-bold text-slate-300">MASKINSTOBA - Ingeniería & Soporte Técnico Especializado</p>
+            <p class="text-[11px] text-slate-600">Plataforma de gestión de hardware, laboratorios de reparación y trazabilidad en tiempo real.</p>
         </div>
-      </div>
-    </div>
+    </footer>
 
-    <!-- DASHBOARD TÉCNICO -->
-    <div id="view-dashboard-tecnico" class="view-section hidden w-full space-y-6">
-      <div class="flex border-b border-slate-800 pb-4 justify-between items-center">
-        <div>
-          <h2 class="text-2xl font-bold text-slate-100">Panel Técnico de Reparaciones</h2>
-          <p class="text-xs text-emerald-400 font-mono mt-0.5">Órdenes activas: <span id="contador-ordenes-tomadas">0</span> / 4 máximas</p>
-        </div>
-        <div class="flex gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
-          <button onclick="switchTabTecnico('disponibles')" id="tab-tec-disponibles" class="px-4 py-2 rounded-lg text-xs font-semibold bg-emerald-600/20 text-emerald-400 border border-emerald-500/30">Órdenes Disponibles</button>
-          <button onclick="switchTabTecnico('tomadas')" id="tab-tec-tomadas" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">Mis Órdenes Tomadas</button>
-          <button onclick="switchTabTecnico('datos')" id="tab-tec-datos" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200">Mis Datos</button>
-        </div>
-      </div>
-
-      <!-- Tab Órdenes Disponibles -->
-      <div id="subview-tec-disponibles" class="space-y-4">
-        <section class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-          <div class="flex justify-between items-center">
-            <h3 class="font-bold text-slate-100">Órdenes Libres para Tomar</h3>
-            <button onclick="obtenerOrdenesTecnico()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 rounded-xl border border-slate-700">Actualizar Lista</button>
-          </div>
-          <ul id="tecnico-ordenes-disponibles" class="space-y-3"></ul>
-        </section>
-      </div>
-
-      <!-- Tab Órdenes Tomadas -->
-      <div id="subview-tec-tomadas" class="hidden space-y-4">
-        <section class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-          <h3 class="font-bold text-slate-100">Órdenes en Mantenimiento por Mí</h3>
-          <ul id="tecnico-ordenes-tomadas" class="space-y-4"></ul>
-        </section>
-      </div>
-
-      <!-- Tab Mis Datos Técnico -->
-      <div id="subview-tec-datos" class="hidden space-y-4">
-        <div id="perfil-tecnico-container" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl space-y-4"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <footer class="border-t border-slate-800 text-center py-4 text-xs text-slate-500">
-    MKA Servicio Técnico &copy; 2026 - Todos los derechos reservados.
-  </footer>
-
-  <script src="app.js"></script>
+    <!-- SCRIPT PRINCIPAL DE JS -->
+    <script src="app.js"></script>
 </body>
 </html>
