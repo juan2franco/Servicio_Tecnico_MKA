@@ -75,3 +75,15 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+# Base local SQLite del lector NFC
+backend/mka_local.db
+_respaldo_antes_nfc/
+# Enlace publico (Cloudflare Tunnel)
+herramientas/cloudflared.exe
+herramientas/cloudflared.descargando
+herramientas/enlace_publico.txt
+
+# Datos de prueba y archivos locales de las herramientas
+backend/datos_de_prueba.md
+herramientas/subir_github.log
+herramientas/mensaje_commit.txt

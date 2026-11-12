@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from database import get_db
+from app import seguridad
 import models
 
 router = APIRouter(prefix="/clients", tags=["Clientes"])
@@ -24,10 +25,14 @@ class ClientResponse(BaseModel):
     email: Optional[str] = None
     phone: str
     direccion: str
-    password: str  # <--- Necesario para que el login lo valide en el frontend
+    # La contraseña ya NO se devuelve: el inicio de sesión se valida en el servidor (/clients/login).
 
     class Config:
         from_attributes = True
+
+class LoginIn(BaseModel):
+    document_id: str
+    password: str
 
 class DispositivoCreate(BaseModel):
     cliente_id: int
@@ -50,12 +55,26 @@ def create_client(client: ClientCreate, db: Session = Depends(get_db)):
     existing = db.query(models.ClienteModel).filter(models.ClienteModel.document_id == client.document_id).first()
     if existing:
         raise HTTPException(status_code=400, detail="Ya existe un cliente registrado con este documento.")
-    
-    db_client = models.ClienteModel(**client.model_dump())
+
+    datos = client.model_dump()
+    datos["password"] = seguridad.cifrar(client.password)
+    db_client = models.ClienteModel(**datos)
     db.add(db_client)
     db.commit()
     db.refresh(db_client)
     return db_client
+
+@router.post("/login", response_model=ClientResponse)
+def login_client(datos: LoginIn, db: Session = Depends(get_db)):
+    cliente = db.query(models.ClienteModel).filter(models.ClienteModel.document_id == datos.document_id.strip()).first()
+    correcta, recifrar = seguridad.verificar(datos.password, cliente.password if cliente else "")
+    if not cliente or not correcta:
+        raise HTTPException(status_code=401, detail="Documento o contraseña incorrectos.")
+    if recifrar:
+        cliente.password = seguridad.cifrar(datos.password)
+        db.commit()
+        db.refresh(cliente)
+    return cliente
 
 @router.get("/", response_model=List[ClientResponse])
 def list_clients(db: Session = Depends(get_db)):

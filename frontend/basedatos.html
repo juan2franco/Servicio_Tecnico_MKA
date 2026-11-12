@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MKA - Base de datos</title>
+    <link rel="icon" href="image/mka.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full font-sans antialiased bg-slate-950">
+    <header class="border-b border-slate-800 bg-slate-950/90 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <img src="image/unnamed.png" alt="" class="h-9 w-9 object-contain">
+                <div>
+                    <h1 class="text-sm font-black tracking-wider text-white">MASKINSTOBA · Base de datos</h1>
+                    <p id="bd-motor" class="text-[11px] text-cyan-400 font-mono">Conectando…</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="bd-recargar" class="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white bg-slate-900 border border-slate-700 rounded-xl">Actualizar</button>
+                <a href="./" class="px-4 py-2 text-xs font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-xl hover:bg-emerald-600 hover:text-white">Volver al panel</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <aside class="lg:col-span-1 bg-slate-900/90 border border-slate-800 rounded-3xl p-4 h-fit">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 pb-3">Tablas</p>
+            <ul id="bd-tablas" class="space-y-1"><li class="text-xs text-slate-500 px-2">Cargando…</li></ul>
+            <p class="text-[10px] text-slate-500 px-2 pt-4 leading-relaxed">Solo lectura. Las contraseñas se muestran ocultas. Esta página solo funciona desde este PC.</p>
+        </aside>
+
+        <section class="lg:col-span-3 bg-slate-900/90 border border-slate-800 rounded-3xl p-5 space-y-4 min-w-0">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 id="bd-titulo" class="text-lg font-black text-white">Elige una tabla</h2>
+                    <p id="bd-subtitulo" class="text-xs text-slate-400"></p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="bd-filtro" type="search" placeholder="Filtrar esta página" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500">
+                    <button id="bd-anterior" class="px-3 py-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 rounded-xl disabled:opacity-40" disabled>◀</button>
+                    <span id="bd-pagina" class="text-xs text-slate-400 font-mono">–</span>
+                    <button id="bd-siguiente" class="px-3 py-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 rounded-xl disabled:opacity-40" disabled>▶</button>
+                </div>
+            </div>
+            <div id="bd-aviso"></div>
+            <div class="overflow-auto max-h-[70vh] border border-slate-800 rounded-2xl">
+                <table class="w-full text-xs">
+                    <thead id="bd-cabecera" class="bg-slate-950 sticky top-0 text-[10px] uppercase tracking-wider text-slate-400"></thead>
+                    <tbody id="bd-filas"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API = location.pathname.startsWith("/app") ? location.origin : "http://localhost:8000";
+        const LIMITE = 50;
+        const estado = { tabla: null, pagina: 1, total: 0, datos: null };
+        const $ = (id) => document.getElementById(id);
+        const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+        async function pedir(ruta) {
+            const res = await fetch(`${API}/basedatos${ruta}`);
+            const cuerpo = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(cuerpo.detail || `Error ${res.status}`);
+            return cuerpo;
+        }
+
+        function aviso(texto) {
+            $("bd-aviso").innerHTML = texto
+                ? `<div class="bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs rounded-2xl p-4">${esc(texto)}</div>`
+                : "";
+        }
+
+        async function cargarTablas() {
+            try {
+                const r = await pedir("");
+                $("bd-motor").textContent = `${r.motor.toUpperCase()} · ${r.ubicacion}`;
+                $("bd-tablas").innerHTML = r.tablas.map((t) => `
+                    <li><button data-tabla="${esc(t.nombre)}" class="w-full flex justify-between items-center px-3 py-2 rounded-xl text-xs font-semibold ${t.nombre === estado.tabla ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}">
+                        <span class="truncate">${esc(t.nombre)}</span><span class="font-mono text-[10px] opacity-70">${t.filas}</span>
+                    </button></li>`).join("");
+                if (!estado.tabla && r.tablas.length) abrir(r.tablas.find((t) => t.nombre === "nfc_lecturas")?.nombre || r.tablas[0].nombre);
+                aviso("");
+            } catch (e) {
+                $("bd-motor").textContent = "Sin acceso";
+                $("bd-tablas").innerHTML = "";
+                aviso(e.message);
+            }
+        }
+
+        async function abrir(tabla, pagina = 1) {
+            estado.tabla = tabla;
+            estado.pagina = pagina;
+            document.querySelectorAll("[data-tabla]").forEach((b) => {
+                b.className = `w-full flex justify-between items-center px-3 py-2 rounded-xl text-xs font-semibold ${b.dataset.tabla === tabla ? "bg-cyan-600 text-white" : "text-slate-300 hover:bg-slate-800"}`;
+            });
+            try {
+                const r = await pedir(`/${encodeURIComponent(tabla)}?limite=${LIMITE}&pagina=${pagina}`);
+                estado.total = r.total;
+                estado.datos = r;
+                $("bd-titulo").textContent = tabla;
+                $("bd-subtitulo").textContent = `${r.total} fila${r.total === 1 ? "" : "s"} · ${r.columnas.length} columnas · más recientes primero`;
+                const paginas = Math.max(1, Math.ceil(r.total / LIMITE));
+                $("bd-pagina").textContent = `${pagina} / ${paginas}`;
+                $("bd-anterior").disabled = pagina <= 1;
+                $("bd-siguiente").disabled = pagina >= paginas;
+                pintar();
+            } catch (e) {
+                aviso(e.message);
+            }
+        }
+
+        function pintar() {
+            const r = estado.datos;
+            if (!r) return;
+            const filtro = $("bd-filtro").value.trim().toLowerCase();
+            const filas = filtro ? r.filas.filter((f) => Object.values(f).some((v) => String(v ?? "").toLowerCase().includes(filtro))) : r.filas;
+            $("bd-cabecera").innerHTML = `<tr>${r.columnas.map((c) => `<th class="text-left font-bold px-3 py-2.5 whitespace-nowrap border-b border-slate-800">${esc(c)}</th>`).join("")}</tr>`;
+            $("bd-filas").innerHTML = filas.length
+                ? filas.map((f) => `<tr class="border-b border-slate-800/60 hover:bg-slate-800/40">${r.columnas.map((c) => {
+                    const v = f[c];
+                    const vacio = v === null || v === undefined || v === "";
+                    return `<td class="px-3 py-2 align-top max-w-xs truncate ${vacio ? "text-slate-600 italic" : "text-slate-200"}" title="${esc(v)}">${vacio ? "null" : esc(v)}</td>`;
+                }).join("")}</tr>`).join("")
+                : `<tr><td class="px-3 py-6 text-slate-500" colspan="${r.columnas.length}">Sin filas.</td></tr>`;
+        }
+
+        $("bd-tablas").addEventListener("click", (e) => {
+            const b = e.target.closest("[data-tabla]");
+            if (b) { $("bd-filtro").value = ""; abrir(b.dataset.tabla); }
+        });
+        $("bd-anterior").addEventListener("click", () => abrir(estado.tabla, estado.pagina - 1));
+        $("bd-siguiente").addEventListener("click", () => abrir(estado.tabla, estado.pagina + 1));
+        $("bd-filtro").addEventListener("input", pintar);
+        $("bd-recargar").addEventListener("click", async () => { await cargarTablas(); if (estado.tabla) abrir(estado.tabla, estado.pagina); });
+        cargarTablas();
+    </script>
+</body>
+</html>

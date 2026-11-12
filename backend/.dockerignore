@@ -1,5 +1,8 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 .env
 *.log
+*.db
+datos_de_prueba.md

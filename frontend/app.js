@@ -1,4 +1,10 @@
-const API_URL = "http://localhost:8000";
+// Si la página la sirve la propia API (/app/, también por el enlace público), se usa el mismo origen.
+// Si no (nginx en el puerto 80 o archivo abierto a mano), la API está en el puerto 8000.
+const API_URL = location.pathname.startsWith("/app")
+    ? location.origin
+    : (location.protocol.startsWith("http") && location.hostname)
+        ? `${location.protocol}//${location.hostname}:8000`
+        : "http://localhost:8000";
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("¡MKA Frontend inicializado!");
@@ -26,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const targetSub = document.getElementById(`subview-cli-${tabName}`);
         if (targetSub) targetSub.classList.remove('hidden');
-        
+
         const activeTab = document.getElementById(`tab-cli-${tabName}`);
         if (activeTab) {
             activeTab.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 text-white shadow-md transition-all";
@@ -44,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const targetSub = document.getElementById(`subview-tec-${tabName}`);
         if (targetSub) targetSub.classList.remove('hidden');
-        
+
         const activeTab = document.getElementById(`tab-tec-${tabName}`);
         if (activeTab) {
             activeTab.className = "px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-md transition-all";
@@ -147,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
-                
+
                 if (!response.ok) {
                     const errorDetail = await response.json();
                     let msg = "Error al crear orden";
@@ -173,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const cliStr = localStorage.getItem("clienteActivo");
             if (!cliStr) return alert("Debes iniciar sesión.");
             const cli = JSON.parse(cliStr);
-            
+
             const data = {
                 cliente_id: cli.id,
                 nombre_equipo: document.getElementById("disp-nombre")?.value || "",
@@ -208,19 +214,17 @@ window.simularLoginCliente = async function(event) {
     const pass = document.getElementById("cli-login-pass")?.value.trim();
 
     try {
-        const res = await fetch(`${API_URL}/clients/`);
-        const clientes = await res.json();
-
-        if (!Array.isArray(clientes)) {
-            throw new Error(clientes.detail || "Error al consultar clientes en la API.");
-        }
-
-        const cli = clientes.find(c => String(c.document_id) === doc && String(c.password) === pass);
-
-        if (!cli) {
+        const res = await fetch(`${API_URL}/clients/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ document_id: doc, password: pass })
+        });
+        if (res.status === 401) {
             alert("Documento o contraseña incorrectos.");
             return;
         }
+        if (!res.ok) throw new Error("Error al consultar la API.");
+        const cli = await res.json();
 
         localStorage.setItem("clienteActivo", JSON.stringify(cli));
         alert(`¡Bienvenido, ${cli.full_name}!`);
@@ -240,19 +244,17 @@ window.simularLoginTecnico = async function(event) {
     const pass = document.getElementById("tecnico-login-pass")?.value.trim();
 
     try {
-        const res = await fetch(`${API_URL}/tecnicos/`);
-        const tecnicos = await res.json();
-
-        if (!Array.isArray(tecnicos)) {
-            throw new Error(tecnicos.detail || "Error al consultar técnicos en la API.");
-        }
-
-        const tec = tecnicos.find(t => String(t.document_id) === doc && String(t.password) === pass);
-
-        if (!tec) {
+        const res = await fetch(`${API_URL}/tecnicos/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ document_id: doc, password: pass })
+        });
+        if (res.status === 401) {
             alert("Cédula o contraseña incorrectas.");
             return;
         }
+        if (!res.ok) throw new Error("Error al consultar la API.");
+        const tec = await res.json();
 
         localStorage.setItem("tecnicoActivo", JSON.stringify(tec));
         alert(`¡Bienvenido, ${tec.nombre}!`);
@@ -292,7 +294,11 @@ function cargarDatosTecnicoSesion() {
     `;
 }
 
-// OBTENER DISPOSITIVOS DEL CLIENTE
+function escaparHtml(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// OBTENER DISPOSITIVOS DEL CLIENTE (con la ficha y el historial que llena el técnico)
 async function obtenerDispositivosCliente() {
     const list = document.getElementById("dispositivos-list");
     if (!list) return;
@@ -301,7 +307,8 @@ async function obtenerDispositivosCliente() {
     const cli = JSON.parse(cliStr);
 
     try {
-        const res = await fetch(`${API_URL}/clients/dispositivos/${cli.id}`);
+        let res = await fetch(`${API_URL}/nfc/equipos?cliente_id=${cli.id}&con_historial=true`);
+        if (!res.ok) res = await fetch(`${API_URL}/clients/dispositivos/${cli.id}`);
         const dispositivos = await res.json();
         list.innerHTML = "";
         if (!Array.isArray(dispositivos) || !dispositivos.length) {
@@ -309,11 +316,27 @@ async function obtenerDispositivosCliente() {
             return;
         }
         dispositivos.forEach(d => {
+            const historial = Array.isArray(d.historial) ? d.historial : [];
+            const extras = [d.tipo_equipo, d.color].filter(Boolean).map(escaparHtml).join(" · ");
+            const itemsHistorial = historial.map(h => `
+                <li class="border-l-2 border-cyan-500/40 pl-3 py-1">
+                    <p class="text-[11px] text-slate-300"><span class="font-bold text-cyan-400">${escaparHtml(h.tipo)}</span> · ${escaparHtml(h.fecha ? new Date(h.fecha).toLocaleString("es-CO") : "")}</p>
+                    <p class="text-xs text-slate-400 whitespace-pre-line">${escaparHtml(h.descripcion)}</p>
+                </li>`).join("");
             list.innerHTML += `
-                <li class="bg-slate-950 border border-slate-800 p-4 rounded-2xl">
-                    <p class="text-sm font-bold text-slate-200">${d.nombre_equipo}</p>
-                    <p class="text-xs text-slate-400">Marca: ${d.marca}</p>
-                    <p class="text-xs text-slate-500">Serial/Modelo: ${d.serial_modelo}</p>
+                <li class="bg-slate-950 border border-slate-800 p-4 rounded-2xl space-y-1">
+                    <div class="flex items-center justify-between gap-2">
+                        <p class="text-sm font-bold text-slate-200">${escaparHtml(d.nombre_equipo)}</p>
+                        ${d.uid ? `<span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">Tarjeta NFC</span>` : ""}
+                    </div>
+                    <p class="text-xs text-slate-400">Marca: ${escaparHtml(d.marca)}</p>
+                    <p class="text-xs text-slate-500">Serial/Modelo: ${escaparHtml(d.serial_modelo)}</p>
+                    ${extras ? `<p class="text-xs text-slate-500">${extras}</p>` : ""}
+                    ${historial.length ? `
+                    <details class="pt-2">
+                        <summary class="text-[11px] font-bold text-cyan-400 cursor-pointer">Historial técnico (${historial.length})</summary>
+                        <ul class="mt-2 space-y-2">${itemsHistorial}</ul>
+                    </details>` : ""}
                 </li>
             `;
         });
@@ -412,11 +435,11 @@ async function obtenerOrdenesTecnico() {
                             <span class="text-xs font-mono text-emerald-400 font-bold">#${ord.id} - ${ord.estado}</span>
                         </div>
                         <p class="text-xs text-slate-400">Falla: ${ord.descripcion}</p>
-                        
+
                         <div class="space-y-2 pt-2 border-t border-slate-800">
                             <label class="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Actualizar Avance en Tiempo Real:</label>
                             <input type="text" id="avance-input-${ord.id}" value="${ord.avance_realtime || ''}" placeholder="Ej. Pruebas de encendido superadas, procediendo a ensamble..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200">
-                            
+
                             <div class="flex gap-2 justify-end pt-1">
                                 <button onclick="guardarAvance(${ord.id}, 'En Reparación')" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg">Guardar Avance</button>
                                 <button onclick="guardarAvance(${ord.id}, 'Finalizado')" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg">Finalizar Trabajo</button>
