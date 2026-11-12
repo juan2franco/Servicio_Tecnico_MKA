@@ -25,8 +25,8 @@ iniciar_docker.bat          (o: docker compose up -d --build)
 | Panel (servido por la API) | http://localhost:8000/app/ |
 | Panel (nginx) | http://localhost |
 | API y documentación | http://localhost:8000/docs |
-| Base de datos (Adminer) | http://localhost:8080 · servidor `db`, usuario `root`, base `mka_db` |
-| MySQL desde el PC | `localhost:3307` |
+| Base de datos (Adminer) | http://localhost:8081 · servidor `db`, usuario `root`, base `mka_db` |
+| MySQL desde el PC | `localhost:3316` |
 
 El lector NFC y el enlace público corren en Windows y le hablan a la API en `localhost:8000`, con o sin Docker.
 
@@ -67,7 +67,7 @@ Flujo: tarjeta → RC522 → ESP32 → USB → `puente_nfc.py` → `POST /nfc/le
 ## Ver la base de datos
 
 - Sin Docker: botón **Base de datos** en la página, o el ícono **MKA Base de datos** (http://localhost:8000/app/basedatos.html). Es de solo lectura, oculta las contraseñas y solo funciona desde el mismo PC.
-- Con Docker: Adminer en http://localhost:8080.
+- Con Docker: Adminer en http://localhost:8081.
 
 ## Seguridad (estado actual)
 

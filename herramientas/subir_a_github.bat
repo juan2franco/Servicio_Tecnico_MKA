@@ -25,7 +25,7 @@ if not defined GN git config user.name "thomas alzate"
 if not defined GM git config user.email "234611324+thomasalzate-boop@users.noreply.github.com"
 
 git checkout -B %RAMA% || exit /b 1
-git add -- backend docker-compose.yml .gitignore README.md iniciar_mka.bat apagar_mka.bat crear_acceso_directo.bat iniciar_docker.bat herramientas/subir_a_github.bat frontend/app.js frontend/index.html frontend/nfc.js frontend/compartir.js frontend/basedatos.html frontend/output.css frontend/image hardware herramientas/compartir_internet.py || exit /b 1
+git add -- backend docker-compose.yml .gitignore README.md iniciar_mka.bat apagar_mka.bat crear_acceso_directo.bat iniciar_docker.bat herramientas/subir_a_github.bat herramientas/diagnostico_puertos.bat frontend/app.js frontend/index.html frontend/nfc.js frontend/compartir.js frontend/basedatos.html frontend/output.css frontend/image hardware herramientas/compartir_internet.py || exit /b 1
 echo --- Archivos en el commit:
 git diff --cached --stat
 git commit -F "%~dp0mensaje_commit.txt" || exit /b 1

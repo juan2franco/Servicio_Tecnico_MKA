@@ -19,7 +19,22 @@ echo   MKA - Servicio Tecnico
 echo   ----------------------
 echo.
 
-rem ---- Si MKA ya esta encendido, solo se abre el panel ----
+echo Revisando dependencias...
+%PY% -c "import fastapi, uvicorn, sqlalchemy, pymysql, email_validator, serial" >nul 2>nul
+if errorlevel 1 (
+    echo Instalando dependencias, solo la primera vez...
+    %PY% -m pip install -q --disable-pip-version-check fastapi uvicorn sqlalchemy pymysql pydantic email-validator pyserial
+)
+if not exist "%~dp0herramientas" mkdir "%~dp0herramientas"
+
+rem ---- Cada parte se enciende solo si no esta corriendo ya (sirve tambien con Docker) ----
+call :corriendo "puente_nfc.py" || start "MKA - Lector NFC (USB)" /min cmd /k "cd /d "%~dp0hardware\puente_usb" && %PY% puente_nfc.py"
+call :corriendo "compartir_internet.py"
+if errorlevel 1 (
+    type nul > "%~dp0herramientas\enlace_publico.txt"
+    start "MKA - Enlace publico" /min cmd /k "cd /d "%~dp0herramientas" && %PY% compartir_internet.py"
+)
+
 curl -s -o nul --max-time 2 http://localhost:8000/salud
 if not errorlevel 1 (
     echo MKA ya estaba encendido. Abriendo el panel...
@@ -27,19 +42,7 @@ if not errorlevel 1 (
     goto :enlace
 )
 
-echo Revisando dependencias...
-%PY% -c "import fastapi, uvicorn, sqlalchemy, pymysql, email_validator, serial" >nul 2>nul
-if errorlevel 1 (
-    echo Instalando dependencias, solo la primera vez...
-    %PY% -m pip install -q --disable-pip-version-check fastapi uvicorn sqlalchemy pymysql pydantic email-validator pyserial
-)
-
-if not exist "%~dp0herramientas" mkdir "%~dp0herramientas"
-type nul > "%~dp0herramientas\enlace_publico.txt"
-
 start "MKA - API" /min cmd /k "cd /d "%~dp0backend" && %PY% -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
-start "MKA - Lector NFC (USB)" /min cmd /k "cd /d "%~dp0hardware\puente_usb" && %PY% puente_nfc.py"
-start "MKA - Enlace publico" /min cmd /k "cd /d "%~dp0herramientas" && %PY% compartir_internet.py"
 
 echo Encendiendo la API...
 for /l %%i in (1,1,40) do (
@@ -86,3 +89,9 @@ echo MKA queda funcionando con las ventanas minimizadas en la barra de tareas.
 echo Para apagarlo usa el icono "Apagar MKA" del escritorio.
 echo.
 pause
+exit /b 0
+
+rem Devuelve 0 si hay un proceso de Python corriendo ese script.
+:corriendo
+powershell -NoProfile -Command "if (Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'python*' -and $_.CommandLine -like '*%~1*' }) { exit 0 } else { exit 1 }"
+exit /b %errorlevel%

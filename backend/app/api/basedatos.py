@@ -3,7 +3,7 @@
 Solo responde a peticiones hechas desde el mismo PC donde corre la API
 (http://localhost:8000). Quien entra por el enlace público o por la red
 recibe 403. Las columnas de contraseña nunca se muestran.
-En Docker se usa Adminer (http://localhost:8080) en su lugar.
+En Docker se usa Adminer (http://localhost:8081) en su lugar.
 """
 
 import os
@@ -23,7 +23,7 @@ COLUMNAS_OCULTAS = {"password", "contrasena", "clave"}
 
 def solo_este_pc(request: Request) -> None:
     if os.getenv("MKA_EN_DOCKER") == "1":
-        raise HTTPException(status_code=403, detail="En Docker la base de datos se ve con Adminer: http://localhost:8080")
+        raise HTTPException(status_code=403, detail="En Docker la base de datos se ve con Adminer: http://localhost:8081")
     host = request.client.host if request.client else ""
     if host not in ("127.0.0.1", "::1") or any(c in request.headers for c in CABECERAS_DE_PROXY):
         raise HTTPException(status_code=403,

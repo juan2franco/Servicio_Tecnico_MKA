@@ -69,7 +69,7 @@ if defined ENLACE echo %ENLACE%| clip
 echo.
 echo ================================================================
 echo   Panel:            http://localhost:8000/app/   (o http://localhost)
-echo   Base de datos:    http://localhost:8080   (Adminer)
+echo   Base de datos:    http://localhost:8081   (Adminer)
 echo                     Servidor: db   Usuario: root   Base: mka_db
 echo                     Clave: la de MYSQL_ROOT_PASSWORD en docker-compose.yml
 if defined ENLACE echo   Para compartir:   %ENLACE%   - ya esta copiado
